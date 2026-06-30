@@ -175,7 +175,7 @@
         <div style="width: 100%; display: flex; flex-direction: column; background: #1a1a1a; padding: 12px; border-radius: 4px; border: 1px solid #333;">
           <!-- プレビュー枠 -->
           <div id="jiro-preview-container" class="w-full relative overflow-hidden rounded" style="background: #111; border: 3px solid #222; height: 110px; outline: none; touch-action: none; user-select: none;" tabindex="0">
-            <div class="lane absolute top-0 bottom-0 left-0 right-0 bg-[rgba(0,0,0,0.15)] border-t border-b border-[rgba(255,255,255,0.1)]"></div>
+            <!-- 二重描画と位置ズレを防ぐため、HTML上の余分な .lane div 要素を完全に削除しました。レーンはすべて Canvas 側へ一本化して描画します。 -->
             
             <!-- 小節番号・再生時間などを表示するレイヤー -->
             <div id="jiro-measure-display" class="absolute left-[120px] top-[8px] z-30 pointer-events-none text-[10px] font-semibold text-white bg-[rgba(0,0,0,0.6)] px-2 py-0.5 rounded" style="white-space: nowrap;">小節: 0 / 0</div>
@@ -1237,17 +1237,18 @@ let state_jposStartX = HIT_POSITION_X_DEFAULT;
 let state_jposEndX = HIT_POSITION_X_DEFAULT;
 let state_jposEasing = 0;
 
-// 太鼓交互発光状態管理用の変数 (演奏時間軸に連動)
-let lastDonLitSide = 'left';
-let lastKaLitSide = 'left';
+// 【仕様変更】左右交互発光を全ノーツヒット順の単一シークエンスで統合管理
+let lastLitSide = 'left'; // 'left' または 'right' (次は逆側を光らせる)
 
-let lastLeftDonHitTime = -100;
-let lastRightDonHitTime = -100;
-let lastLeftKaHitTime = -100;
-let lastRightKaHitTime = -100;
+// 太鼓各領域の実時間(performance.now())発光開始タイムスタンプ (音ズレ防止・一時停止バグ解決)
+let lastLeftDonHitTime = -10000;
+let lastRightDonHitTime = -10000;
+let lastLeftKaHitTime = -10000;
+let lastRightKaHitTime = -10000;
 
-// コンボ弾みアニメーション用スケール
+// コンボ弾みアニメーション用スケール (実時間制御)
 let comboBounceScale = 1.0;
+let lastComboHitTime = -10000;
 
 let uploadedMusicFileName = "";
 let uploadedMusicObjectURL = null;
@@ -1635,152 +1636,6 @@ u('.controls-page .button[data-value]').on('click', e => {
   updateUI(); 
 });
 
-// 合成ビープ音による効果音生成（フォールバック用）
-function createSynthesizedAudioBuffer(ctx, type) {
-    const rate = ctx.sampleRate || 44100;
-    const duration = 0.12;
-    const length = rate * duration;
-    const buffer = ctx.createBuffer(1, length, rate);
-    const data = buffer.getChannelData(0);
-    if (type === 'don') {
-        for (let i = 0; i < length; i++) {
-            const t = i / rate;
-            data[i] = Math.sin(2 * Math.PI * 140 * Math.exp(-35 * t)) * Math.exp(-12 * t);
-        }
-    } else if (type === 'ka') {
-        for (let i = 0; i < length; i++) {
-            const t = i / rate;
-            data[i] = (Math.random() * 2 - 1) * Math.exp(-45 * t) * 0.4 + Math.sin(2 * Math.PI * 380 * Math.exp(-25 * t)) * Math.exp(-18 * t) * 0.25;
-        }
-    } else { // balloon
-        for (let i = 0; i < length; i++) {
-            const t = i / rate;
-            data[i] = Math.sin(2 * Math.PI * 750 * Math.exp(-12 * t)) * Math.exp(-8 * t) * 0.45;
-        }
-    }
-    return buffer;
-}
-
-async function loadAudioBuffer(url, key) {
-    if (!audioContext) return;
-    try {
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
-        audioBuffers[key] = await audioContext.decodeAudioData(arrayBuffer);
-    } catch (e) { 
-        console.warn(`Failed to load online audio, using synthesis fallback instead.`, e); 
-    }
-}
-
-function initializeAudio() {
-    if (!audioContext) {
-        try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            
-            seGainNode = audioContext.createGain();
-            seGainNode.gain.value = seVolume;
-            seGainNode.connect(audioContext.destination);
-            
-            musicGainNode = audioContext.createGain();
-            musicGainNode.gain.value = musicVolume;
-            musicGainNode.connect(audioContext.destination);
-
-            // 合成音で初期化
-            audioBuffers['don'] = createSynthesizedAudioBuffer(audioContext, 'don');
-            audioBuffers['ka'] = createSynthesizedAudioBuffer(audioContext, 'ka');
-            audioBuffers['balloon'] = createSynthesizedAudioBuffer(audioContext, 'balloon');
-            
-        } catch (e) { 
-            console.error("Web Audio API is not supported in this browser"); 
-            return; 
-        }
-    } else {
-        if (seGainNode) seGainNode.gain.value = seVolume;
-        if (musicGainNode) musicGainNode.gain.value = musicVolume;
-    }
-    
-    // 指定された dong.wav, ka.wav, balloon.wav を打音として読み込む
-    ['don', 'ka', 'balloon'].forEach(key => {
-        const base64 = localStorage.getItem(`se_${key}`);
-        if (base64) {
-            loadAudioBuffer(base64, key);
-        } else {
-            const defaultFilename = (key === 'don') ? 'dong.wav' : ((key === 'ka') ? 'ka.wav' : 'balloon.wav');
-            loadAudioBuffer(defaultFilename, key);
-        }
-    });
-}
-
-function updateChartState(timeSec) {
-    if (!currentChartData) {
-        HIT_POSITION_X = HIT_POSITION_X_DEFAULT;
-        const hitCircleEl = u('#jiro-preview-container .hit-circle').first();
-        if (hitCircleEl) {
-            hitCircleEl.style.left = (HIT_POSITION_X_DEFAULT - 30) + 'px';
-        }
-        u('#jiro-preview-container').removeClass('gogo-time-bg');
-        return;
-    }
-    while (state_commandIndex < currentChartData.commands.length) {
-        const cmd = currentChartData.commands[state_commandIndex];
-        if (cmd.time > timeSec) {
-            break;
-        }
-        switch (cmd.type) {
-            case 'BPMCHANGE':
-                state_currentBPM = cmd.value;
-                break;
-            case 'GOGOSTART':
-                state_isGogo = true;
-                break;
-            case 'GOGOEND':
-                state_isGogo = false;
-                break;
-        }
-        state_commandIndex++;
-    }
-    HIT_POSITION_X = HIT_POSITION_X_DEFAULT;
-    const hitCircleEl = u('#jiro-preview-container .hit-circle').first();
-    if (hitCircleEl) {
-        hitCircleEl.style.left = (HIT_POSITION_X - 30) + 'px';
-    }
-    u('#jiro-preview-container').toggleClass('gogo-time-bg', state_isGogo);
-}
-
-function seekChartState(timeSec) {
-    state_commandIndex = 0;
-    state_currentBPM = tjaParsed ? (tjaParsed.headers.bpm || 120) : 120;
-    state_isGogo = false;
-    state_jposStartTime = -Infinity;
-    state_jposDuration = 0;
-    state_jposStartX = HIT_POSITION_X_DEFAULT;
-    state_jposEndX = HIT_POSITION_X_DEFAULT;
-    state_jposEasing = 0;
-    if (!currentChartData) {
-        updateChartState(0);
-        return;
-    }
-    while (state_commandIndex < currentChartData.commands.length) {
-        const cmd = currentChartData.commands[state_commandIndex];
-        if (cmd.time > timeSec) {
-            break;
-        }
-        switch (cmd.type) {
-            case 'BPMCHANGE':
-                state_currentBPM = cmd.value;
-                break;
-            case 'GOGOSTART':
-                state_isGogo = true;
-                break;
-            case 'GOGOEND':
-                state_isGogo = false;
-                break;
-        }
-        state_commandIndex++;
-    }
-    updateChartState(timeSec);
-}
-
 // 譜面画像 (drawChart) と完全に統一された美しい多重フチ付きノーツ描画
 function drawJiroPremiumNote(ctx, x, y, type) {
     const isBig = (type === '3' || type === '4' || type === '6' || type === '7');
@@ -1830,7 +1685,7 @@ function updateJiroPreview(time = currentElapsedTime) {
     const canvasMargin = 100;
     jiroCtx.clearRect(0, 0, rectWidth, rectHeight);
     
-    // 1. レーンの背景（太鼓本体の縦幅（直径80px）と一致させる）
+    // 1. レーンの背景（太鼓本体の縦幅（直径80px）と完全に一致させる）
     const laneHeight = 80; // レーン高さを太鼓本体(半径40x2=80)に完全に揃える
     const laneTop = baseCenterY - (laneHeight / 2); // 55 - 40 = 15px
     
@@ -1853,7 +1708,7 @@ function updateJiroPreview(time = currentElapsedTime) {
     jiroCtx.lineWidth = 2;
     jiroCtx.strokeRect(0, laneTop, rectWidth, laneHeight);
 
-    // 2. 判定枠（判定円）の常時描画 (中心 X = 175)
+    // 2. 判定枠（判定円）の常時描画 (中心 X = 175, Y = 55)
     jiroCtx.beginPath();
     jiroCtx.arc(HIT_POSITION_X, baseCenterY, 22.5, 0, Math.PI * 2);
     jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
@@ -1891,7 +1746,7 @@ function updateJiroPreview(time = currentElapsedTime) {
         if (note.type === 'BARLINE') {
             if (!note.barlineVisible || (x < -canvasMargin || x > rectWidth + canvasMargin) || pixelsPerSecondX === 0) continue;
             
-            // 正しいY座標での小節線描画
+            // 正しいY座標での小節線描画 (15px 〜 95px)
             jiroCtx.beginPath();
             jiroCtx.moveTo(x, laneTop);
             jiroCtx.lineTo(x, laneTop + laneHeight);
@@ -1980,7 +1835,7 @@ function updateJiroPreview(time = currentElapsedTime) {
         }
     }
 
-    // 4. 太鼓本体グラフィックの描画 (左端 X = 0 ~ 110)
+    // 4. 太鼓本体グラフィックの描画 (左端 X = 0 ~ 110, Y = 15 〜 95)
     // 背景隠し
     jiroCtx.fillStyle = '#1a1a1a';
     jiroCtx.fillRect(0, 0, 110, rectHeight);
@@ -1998,9 +1853,9 @@ function updateJiroPreview(time = currentElapsedTime) {
     const taikoR = 40;
     const faceR = 30;
 
-    // 各領域のフェードアウト発光不透明度の計算 (演奏時間軸連動)
+    // 各領域のシステム実時間(performance.now())連動フェードアウト発光不透明度の計算 (一時停止/シークバグ完全回避)
     const getLitOpacity = (lastHitTime) => {
-        const diff = elapsedTime - lastHitTime;
+        const diff = (performance.now() - lastHitTime) / 1000;
         if (diff >= 0 && diff < 0.15) {
             return 1.0 - (diff / 0.15);
         }
@@ -2017,10 +1872,10 @@ function updateJiroPreview(time = currentElapsedTime) {
     jiroCtx.arc(taikoX, taikoY, taikoR, Math.PI * 0.5, Math.PI * 1.5, false);
     jiroCtx.arc(taikoX, taikoY, faceR, Math.PI * 1.5, Math.PI * 0.5, true);
     jiroCtx.closePath();
-    jiroCtx.fillStyle = '#3a3a3a'; // 通常状態の灰色
+    jiroCtx.fillStyle = '#3a3a3a'; // 判定枠に近い灰色のベース色
     jiroCtx.fill();
     if (leftKaOpacity > 0) {
-        jiroCtx.fillStyle = `rgba(33, 150, 243, ${leftKaOpacity})`; // カッ発光(シアン)
+        jiroCtx.fillStyle = `rgba(33, 150, 243, ${leftKaOpacity})`; // カッ発光 (シアン)
         jiroCtx.fill();
     }
 
@@ -2041,10 +1896,10 @@ function updateJiroPreview(time = currentElapsedTime) {
     jiroCtx.arc(taikoX, taikoY, faceR, Math.PI * 0.5, Math.PI * 1.5, false);
     jiroCtx.lineTo(taikoX, taikoY + faceR);
     jiroCtx.closePath();
-    jiroCtx.fillStyle = '#555555'; // 通常状態の少し薄い灰色
+    jiroCtx.fillStyle = '#555555'; // 通常状態の灰色
     jiroCtx.fill();
     if (leftDonOpacity > 0) {
-        jiroCtx.fillStyle = `rgba(244, 67, 54, ${leftDonOpacity})`; // ドン発光(赤)
+        jiroCtx.fillStyle = `rgba(244, 67, 54, ${leftDonOpacity})`; // ドン発光 (赤)
         jiroCtx.fill();
     }
 
@@ -2075,8 +1930,9 @@ function updateJiroPreview(time = currentElapsedTime) {
     jiroCtx.stroke();
 
     // 5. 太鼓さん次郎仕様のコンボ表示の描画 (レーンを隠さず、叩くビジュアルを邪魔しない下部にアニメーション付き配置)
-    if (comboBounceScale > 1.0) {
-        comboBounceScale -= 0.05; // ポップアップ弾み減衰
+    const comboBounceDuration = (performance.now() - lastComboHitTime) / 1000;
+    if (comboBounceDuration >= 0 && comboBounceDuration < 0.15) {
+        comboBounceScale = 1.35 - (comboBounceDuration / 0.15) * 0.35; // 弾んで1.0に減衰
     } else {
         comboBounceScale = 1.0;
     }
@@ -2266,7 +2122,8 @@ function seekToMeasure(direction) {
 }
 
 function playSE(type) {
-    if (performance.now() - lastSEPlayTime[type] < 1000 / renderFPS) return;
+    // 高速な連打や16分・32分音符でも打鍵SEが一切抜けずに重なって再生されるように、同時打鍵制限を10msへ大幅に緩和
+    if (performance.now() - lastSEPlayTime[type] < 10) return;
     if (!audioContext || !audioBuffers[type] || !seGainNode) return;
     const source = audioContext.createBufferSource();
     source.buffer = audioBuffers[type];
@@ -2319,13 +2176,14 @@ function autoHitCheck(elapsedTime) {
                     if (actualAdded > 0) {
                         playSE('don');
                         
-                        // 風船打鍵での交互発光
-                        if (lastDonLitSide === 'left') {
-                            lastDonLitSide = 'right';
-                            lastRightDonHitTime = elapsedTime;
+                        // 【仕様変更】ヒット順全体で1本管理する左右交互発光を風船打鍵に適用
+                        const side = (lastLitSide === 'left') ? 'right' : 'left';
+                        lastLitSide = side;
+                        const hitTime = performance.now();
+                        if (side === 'left') {
+                            lastLeftDonHitTime = hitTime;
                         } else {
-                            lastDonLitSide = 'left';
-                            lastLeftDonHitTime = elapsedTime;
+                            lastRightDonHitTime = hitTime;
                         }
                     }
 
@@ -2354,14 +2212,14 @@ function autoHitCheck(elapsedTime) {
                     let noteHitType = 'don';
                     playSE(noteHitType);
                     
-                    if (noteHitType === 'don') {
-                        if (lastDonLitSide === 'left') {
-                            lastDonLitSide = 'right';
-                            lastRightDonHitTime = elapsedTime;
-                        } else {
-                            lastDonLitSide = 'left';
-                            lastLeftDonHitTime = elapsedTime;
-                        }
+                    // 【仕様変更】ヒット順全体で1本管理する左右交互発光を連打打鍵に適用
+                    const side = (lastLitSide === 'left') ? 'right' : 'left';
+                    lastLitSide = side;
+                    const hitTime = performance.now();
+                    if (side === 'left') {
+                        lastLeftDonHitTime = hitTime;
+                    } else {
+                        lastRightDonHitTime = hitTime;
                     }
                 }
             } else if (elapsedTime > note.endTime) {
@@ -2376,29 +2234,28 @@ function autoHitCheck(elapsedTime) {
                 const skipEffect = timeSinceLastEffect < (1.0 / 60.0);
                 if (!skipEffect) lastAutoEffectTime = elapsedTime;
                 
+                // 【仕様変更】ヒット順全体でのトグル管理に基づいて左右の太鼓発光スタンプを更新
+                const side = (lastLitSide === 'left') ? 'right' : 'left';
+                lastLitSide = side;
+                const hitTime = performance.now();
+
                 if (note.type === '1' || note.type === '3') {
                     playSE('don');
-                    // 右・左交互に面を発光
-                    if (lastDonLitSide === 'left') {
-                        lastDonLitSide = 'right';
-                        lastRightDonHitTime = elapsedTime;
+                    if (side === 'left') {
+                        lastLeftDonHitTime = hitTime;
                     } else {
-                        lastDonLitSide = 'left';
-                        lastLeftDonHitTime = elapsedTime;
+                        lastRightDonHitTime = hitTime;
                     }
                 } else if (note.type === '2' || note.type === '4') {
                     playSE('ka');
-                    // 右・左交互に縁を発光
-                    if (lastKaLitSide === 'left') {
-                        lastKaLitSide = 'right';
-                        lastRightKaHitTime = elapsedTime;
+                    if (side === 'left') {
+                        lastLeftKaHitTime = hitTime;
                     } else {
-                        lastKaLitSide = 'left';
-                        lastLeftKaHitTime = elapsedTime;
+                        lastRightKaHitTime = hitTime;
                     }
                 }
                 currentCombo++;
-                comboBounceScale = 1.35; // コンボを叩いたポップアップ弾み起動
+                lastComboHitTime = performance.now(); // コンボ弾み起動タイムスタンプ
             } else if (elapsedTime > note.time + JUDGE_BAD) {
                 note.judgeResult = 'miss';
                 currentCombo = 0;
@@ -2408,18 +2265,8 @@ function autoHitCheck(elapsedTime) {
 }
 
 function updateLogic() {
-    if (audioContext && isPlaying) {
-        currentElapsedTime = simulationStartOffset + (audioContext.currentTime - simulationStartTime) * playbackSpeed;
-    } else if (!isPlaying) {
-        // 停止時は何もしない
-    } else {
-        currentElapsedTime += (1000 / 240) / 1000.0 * playbackSpeed;
-    }
-
-    if (chartCoolDownUntil !== null && currentElapsedTime >= chartCoolDownUntil) {
-        chartCoolDownUntil = null;
-    }
-    
+    // 音源再生位置と位置進行を「完全一致（音ズレなし）」させるため、
+    // タイマー側の updateLogic では再生終了判定・時間判定の監視のみに特化させました。
     if (currentChartData && currentChartData.endTime > 0 && currentElapsedTime > currentChartData.endTime + 1.0) {
         if (currentChartData.allMeasureTimes.length > 0) {
             currentElapsedTime = currentChartData.allMeasureTimes[currentChartData.allMeasureTimes.length - 1];
@@ -2438,13 +2285,6 @@ function updateLogic() {
         updateJiroPreview(currentElapsedTime);
         return;
     }
-    
-    updateChartState(currentElapsedTime);
-    if (chartCoolDownUntil === null) {
-        autoHitCheck(currentElapsedTime);
-    }
-    
-    updateJiroUIElements();
 }
 
 // スマートフォン軽量化のためのUI更新レート制限 (100ms周期)
@@ -2467,14 +2307,27 @@ function updateJiroUIElements() {
     }
 }
 
+// 描画フレーム (requestAnimationFrame) の最新時刻に連動させて AUTO 打撃判定を一元管理
+// 音源、ノーツ、AUTO、ヒットエフェクトを寸分のずれもなく同期させ、音ズレを完全に解消
 function drawLoop(timestamp) {
     if (!isPlaying) return;
     animationFrameId = requestAnimationFrame(drawLoop);
-    const elapsed = timestamp - lastFrameTime;
-    if (elapsed < 1000 / renderFPS) return;
-    lastFrameTime = timestamp - (elapsed % (1000 / renderFPS));
     
+    // 描画時の絶対基準として音声再生時刻(currentTime)から経過時間を正確に計算
+    if (audioContext && isPlaying) {
+        currentElapsedTime = simulationStartOffset + (audioContext.currentTime - simulationStartTime) * playbackSpeed;
+    }
+    
+    // 1. AUTO演奏の打鍵判定を描画直前に同一時間軸で実行
+    if (chartCoolDownUntil === null) {
+        autoHitCheck(currentElapsedTime);
+    }
+    
+    // 2. プレビューの描画実行
     updateJiroPreview(currentElapsedTime);
+    
+    // 3. UIエレメントの更新
+    updateJiroUIElements();
 }
 
 // プレビュー操作バインディング
