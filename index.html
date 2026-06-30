@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>作譜補助ツール</title>
+  <script src="https://unpkg.com/umbrellajs@3.3.0/umbrella.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Pixel 3x5';
+      src: url(data:application/font-woff2;charset=utf-8;base64,d09GMgABAAAAAAZMAA0AAAAAEqAAAAX0AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP0ZGVE0cGh4GYACCWhEICo90jGELVAABNgIkA14EIAWMGweBAhvRDxHVpK+QfXlgGzDtofsRpSUwUNJmWWPcfN7lwmBbC38ccLgw4WPCW/Hw/2uV99X/XTS1OzWzoADgdwip9sQh+zju6BiVExnZuy4g2cdGjf91tHfyl6q/k6eXZk1CTSA3NfH+fXWD7GSRdusNGkia/7S//uyGCmnmPiEtkhTJD4fQv9sT9HheAxhwgIx/f+80dI36wtyaxp5QeSmXkG6gy//a79WiI9aZWRcSOuxc7Ntz9+77HEJ8QVBEOkLFcVsN6GtZGFCdyqpWVRhd32U4Hc3MmTNL5SzgvZi9FAJ++SHXAr9feTEwf7eBAdtRCeGIkFGhGt522YxWi4pk05dJBLJm5vDjtz7U7eB6ezw5AsZs2vDd406QtwML4eG3Ftghuxy9VqWyxylXeHKDesgZN1xh4+9ff7motytqgpEHqxiKIHFhVbO6eU+UH8/qhaS+ufRvuHff/gMHDx0+gr2v2FCBo+BB3ElcIC0BLZgBQiVqEHlJ3FdJKOqcGZ5V2bPuwJkkpTz0Gtr6IbetyGuHLXs7D+v7oS3XQ67R0Fz31KN8qCvsCbn+MMUGk5HR0vyhuOTc+TUhVRh1gxv1J1sQ9yF98rQkFNeASpLMycRgwTlHSknJHGz0KnEJXqxTcr7LGCWuWLRt7hiEPkapZiTgXolky1UCcziaEKPkB8PctusSMIXLCkkquVQ2gVJ5oWSgCxhoHClb9iC8HUhgCUtIhHoh8+DZR4fZxT44TMsKxTCXLE+9xdBZ9qF4OeZ2v8lWaNustHoXstmOkrOYawEfXCSkY6XXLQvPVg9j2z5uP856WX37oiohtcfnph8W+tP1eIsX38ow+vkPjCilmF5qolvUp5XCaJEzSuXTnrZ5MVzo9tYtpjkKOOY5CrvvN5oKpWmmMkHe9DzkVOZtKOrzHCgXIyZ72fMNx8IeNbyQER77PAzL4vq8AlU079JpuuOKhQcV06v7PRZNjPNB8kqZSz/B5Wr/vMzJ/BcLeJRdbMrW4JBYoli9+LIUxra1uwOFz43uV091LhndtcZQG10ORQ+ibmpUpYe6LgkuKHNoEkWKkClCRY8jzLDNADmyaqK4aU72tRopYIbAhPLpsI+nLodmRieeEPWkzGZaHC5vmpTBHMZihh4A+/gUxDrNKVmTN0eigoFlNqeIW43lXU7mDLGnxHJmIpssy4UYlsPrWfeTPBmsJEm45j5lY+gK/s3/52al9r9dGXED4y0x3KtAqwLBCFY/l3EAAjhqFAAeUE9ZfljCTwkctdUMVCDOrpgi/K+3OSFA6DwqQKXxmgBJ5wsEyNb8iAAzK/4RoNZFFqBxPMYI0NoteeE0NpV1ULA1ZfW30EGF6cswCZ7c0GALY7mrSRyh2MIEdbdKCqbPS+Sde+JbJ9vxMx2S1Fb959oPBpF0ToRO9EZ4jfRuzt+YsVHVU8MXksVscmN6f73bfFgBsLUDEY7JZLMwaNeEDU2IOCIBjdn+zz2ITbbK7+eDugRG9YC0ZsHPPv5XOLbAxhgyawVKPrYzgVIzJmxapzELJgdp3veCaaMGPSAVHF4OHAfVTmp34HB+1AONKWe3v04NYscHBhYANI3qLHOgu+sATd/SMYerQw69P4I5++N2jsdv9aGXmqElxHPSMH9nOch2nNuZL4YZkuaoll+3TXugWXbAVZS+bmorA4hrPmUjyDuVWBgaSZavnsZakaSZZvnsZ4bJXzRV/UPyPH7A2w5tNrJpzZ3BZ/unm5FE2WJ0QmY7jiI65K9MjVUihMdfpkQa3/UPRB04k65yTzu5OCbtdkQyX9eT16xREJFGIWDkt1NiiQasDFRIlRWQlO6+TbV4HlB/UzPu9HaYiEbSgRUSsZ/gkeqYz9IfHQfkhrOclahILBksigXuz6eWi33meD2yU7ZSBo+EEVXmxn9R8tzZWo2fzq5aSvu04PcB6zQePeVfDcej/spcdr2HDkmsiJwCAT0vDL7gAjiqSZI2Lm4eXj19AUEhYWkZWTl5BUUlZRRXDEYFIIlOoNDqDyWKX2n3Ml5njCgAAAA==) format('woff2');
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: #121212;
+      color: #e0e0e0;
+    }
+    body { display: flex; flex-direction: column; }
+    .pane-main { flex: 1; display: flex; flex-direction: row; overflow: hidden; border-bottom: 1px solid #2d2d2d; }
+    .pane-left { flex: 1; display: flex; flex-direction: column; background: #1e1e1e; border-right: 1px solid #2d2d2d; min-width: 0; }
+    .pane-right { flex: 1; display: flex; flex-direction: column; background: #1a1a1a; position: relative; min-width: 0; }
+    
+    /* エディタとハイライトの重ね合わせ */
+    .area-editor { flex: 1; display: flex; flex-direction: column; padding: 4px; overscroll-behavior: contain; position: relative; }
+    .editor-container { flex: 1; width: 100%; position: relative; overflow: hidden; border: 1px solid #333; background: #1e1e1e; border-radius: 4px; display: flex; }
+    
+    /* 左端の行番号表示エリアをスマホ向けに極限まで省スペース化 */
+    .editor-container .line-numbers {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 28px;
+      background: #151515;
+      border-right: 1px solid #2d2d2d;
+      padding: 6px 0;
+      overflow: hidden;
+      user-select: none;
+      text-align: right;
+      box-sizing: border-box;
+      color: #5a5a5a;
+    }
+    .editor-container .line-numbers span {
+      display: block;
+      padding-right: 3px;
+      height: 16.5px; /* エディタの1行（11px * 1.5line-height = 16.5px）に固定同期 */
+      line-height: 16.5px;
+      font-size: 9px !important;
+      box-sizing: border-box;
+    }
+    
+    .editor-container .backdrop {
+      position: absolute;
+      left: 28px; right: 0; top: 0; bottom: 0;
+      padding: 6px 8px;
+      margin: 0;
+      border: 1px solid transparent;
+      box-sizing: border-box;
+      pointer-events: none;
+      overflow-y: scroll;
+      background-color: #1e1e1e;
+      color: #888888;
+    }
+    .editor-container .backdrop, .area-editor .input, .editor-container .line-numbers {
+      font-family: Consolas, Menlo, "Courier New", "MS Gothic", monospace !important;
+      font-size: 11px !important;
+      line-height: 1.5 !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+      white-space: pre-wrap !important;
+      word-wrap: break-word !important;
+      word-break: break-all !important;
+    }
+    .editor-container .highlight {
+      margin: 0;
+      padding: 0;
+    }
+    .area-editor .input {
+      position: absolute;
+      left: 28px; right: 0; top: 0; bottom: 0;
+      width: calc(100% - 28px);
+      height: 100%;
+      resize: none;
+      padding: 6px 8px;
+      border: none !important;
+      outline: none;
+      overscroll-behavior: contain;
+      background: transparent !important;
+      color: transparent !important;
+      caret-color: #ffffff;
+      overflow-y: scroll;
+      box-sizing: border-box;
+    }
+    .area-editor .input:placeholder-shown {
+      color: #555555 !important;
+    }
+
+    /* フッター・ボタン等のダークモード化 */
+    .area-footer { flex-shrink: 0; background: #1e1e1e; padding: 6px; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid #2d2d2d; }
+    .button-group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .button { padding: 6px 10px; background: #2d2d2d; border: 1px solid #444; font-size: 12px; border-radius: 4px; cursor: pointer; color: #d4d4d4; text-decoration: none; text-align: center; }
+    .button:hover { background: #3d3d3d; border-color: #555; color: #ffffff; }
+    .button.is-active { background: #007bff; color: #ffffff; border-color: #0056b3; font-weight: bold; }
+    .button.is-active:hover { background: #0069d9; }
+    
+    .area-pages { flex: 1; overflow: auto; padding: 5px; -webkit-overflow-scrolling: touch; text-align: center; background: #121212; }
+    .page-editor, .page-preview { transition: width 0.1s ease; margin: 0 auto; width: 100%; display: inline-block; }
+    canvas { background: #ccc; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 100% !important; height: auto !important; display: block; margin: 0 auto; image-rendering: pixelated; }
+    
+    /* エラーパネル of ダークモード調整 */
+    .area-errors { background: #3c1e1e; font-size: 10px; color: #ff8888; padding: 2px 8px; border-top: 1px solid #5c2c2c; }
+    .is-hidden { display: none; }
+    
+    /* 統計・グラデーション設定パネルのダークモード調整 */
+    .page-statistics, .page-gradation { background: #1e1e1e; color: #e0e0e0; padding: 8px; text-align: left; border-radius: 4px; height: 100%; overflow-y: auto; font-size: 12px; line-height: 1.4; }
+    .page-statistics h2, .page-gradation h2 { margin: 10px 0 5px; font-size: 18px; border-bottom: 2px solid #333; }
+    .stat-row { display: flex; border-bottom: 1px solid #2d2d2d; padding: 2px 0; }
+    .stat-label { font-weight: bold; width: 70px; color: #a0a0a0; flex-shrink: 0; }
+    .st-main-title { font-size: 1.4em; font-weight: bold; margin-bottom: 2px; display: block; color: #ffffff; }
+    .st-main-subtitle { font-size: 1.1em; color: #b0b0b0; margin-bottom: 10px; display: block; }
+
+    /* グラデーションパネル内の説明文のスタイル上書き */
+    .page-gradation, .page-gradation div, .page-gradation strong { color: #e0e0e0 !important; }
+    .page-gradation strong { color: #ffffff !important; }
+    .page-gradation code { background: #2d2d2d !important; color: #ff79c6 !important; border: 1px solid #444 !important; padding: 2px 4px; border-radius: 3px; }
+    #grad-list { color: #a0a0a0 !important; border-top: none !important; }
+    .page-gradation div[style*="border-top"] { border-top-color: #333333 !important; }
+
+    .density-graph-container { background: #1a1a1a; margin-top: 15px; padding: 10px 5px 0 0; border-radius: 4px; text-align: left; overflow: hidden; border: 1px solid #333; }
+    .density-graph-container h3 { color: #fff; margin: 0 0 8px 10px; font-size: 14px; border-left: 4px solid #f33; padding-left: 8px; }
+    #density-svg-wrapper { width: 100%; display: block; }
+    .stat-graph line { stroke: #333; }
+    .stat-graph text { fill: #aaa; font-size: 10px; font-family: monospace; }
+
+    /* プレビュー特効エフェクト用 */
+    .jiro-effect {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.15s ease-out;
+      z-index: 5;
+    }
+    .jiro-effect.effect-fade {
+      opacity: 1;
+      transition-duration: 0s;
+    }
+
+    /* ゴーゴータイムのアニメーション */
+    @keyframes gogoBgAnim {
+      0% { background: linear-gradient(to right, #e63900, #ff8c00); }
+      50% { background: linear-gradient(to right, #cc2c00, #ffaa00); }
+      100% { background: linear-gradient(to right, #e63900, #ff8c00); }
+    }
+    .gogo-time-bg {
+      animation: gogoBgAnim 0.6s ease-in-out infinite alternate;
+    }
+  </style>
+</head>
+<body>
+
+<main class="pane-main">
+  <section class="pane-left">
+    <div class="area-editor">
+      <div style="font-size:9px; font-weight:bold; color:#888; margin-bottom: 2px;">TJA EDITOR</div>
+      <div class="editor-container">
+        <div class="line-numbers"></div>
+        <div class="backdrop"><div class="highlight"></div></div>
+        <textarea class="input" placeholder="TJA data..."></textarea>
+      </div>
+    </div>
+    <div class="area-errors"><div class="errors">No error</div></div>
+  </section>
+  <section class="pane-right">
+    <div class="area-pages">
+      <!-- 1. エディタ (旧 プレビュー全体表示) -->
+      <div class="page page-editor"></div>
+      
+      <!-- 2. プレビュー (太鼓さん次郎風同期演奏プレビュー) -->
+      <div class="page page-preview is-hidden">
+        <div style="width: 100%; display: flex; flex-direction: column; background: #1a1a1a; padding: 12px; border-radius: 4px; border: 1px solid #333;">
+          <!-- プレビュー枠 -->
+          <div id="jiro-preview-container" class="w-full relative overflow-hidden rounded" style="background: linear-gradient(to right, #555, #333); border: 3px solid #222; height: 110px; outline: none; touch-action: none; user-select: none;" tabindex="0">
+            <div class="lane absolute top-0 bottom-0 left-0 right-0 bg-[rgba(0,0,0,0.2)] border-t border-b border-[rgba(255,255,255,0.2)]"></div>
+            <!-- 判定円 -->
+            <div class="hit-circle absolute left-[145px] top-1/2 -translate-y-1/2 w-[60px] h-[60px] border-4 border-[rgba(0,0,0,0.7)] rounded-full shadow-lg z-10 bg-[rgba(255,255,255,0.3)] flex justify-center items-center pointer-events-none">
+              <div class="hit-circle-small w-[40px] h-[40px] border-[3px] border-[rgba(0,0,0,0.5)] rounded-full"></div>
+            </div>
+            <!-- ヒットエフェクト -->
+            <div id="jiro-don-effect-l" class="jiro-effect absolute left-[45px] top-1/2 -translate-y-1/2 w-[50px] h-[50px] pointer-events-none opacity-0" style="clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);">
+              <div style="width: 50px; height: 50px; background-color: rgba(244, 67, 54, 0.8); border-radius: 50%;"></div>
+            </div>
+            <div id="jiro-don-effect-r" class="jiro-effect absolute left-[45px] top-1/2 -translate-y-1/2 w-[50px] h-[50px] pointer-events-none opacity-0" style="clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);">
+              <div style="width: 50px; height: 50px; background-color: rgba(244, 67, 54, 0.8); border-radius: 50%;"></div>
+            </div>
+            <div id="jiro-ka-effect-l" class="jiro-effect absolute left-[35px] top-1/2 -translate-y-1/2 w-[70px] h-[70px] pointer-events-none opacity-0" style="clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);">
+              <div style="width: 70px; height: 70px; border: 10px solid rgba(33, 150, 243, 0.8); border-radius: 50%; box-sizing: border-box;"></div>
+            </div>
+            <div id="jiro-ka-effect-r" class="jiro-effect absolute left-[35px] top-1/2 -translate-y-1/2 w-[70px] h-[70px] pointer-events-none opacity-0" style="clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);">
+              <div style="width: 70px; height: 70px; border: 10px solid rgba(33, 150, 243, 0.8); border-radius: 50%; box-sizing: border-box;"></div>
+            </div>
+            
+            <!-- 文字・スコア表示要素 -->
+            <div id="jiro-judge-display" class="absolute left-[120px] top-[20%] -translate-x-1/2 z-30 pointer-events-none font-bold text-2xl" style="text-shadow: 2px 2px 4px #000;"></div>
+            <div id="jiro-roll-display" class="absolute left-[175px] top-[20%] -translate-x-1/2 z-30 pointer-events-none font-bold text-2xl text-white" style="text-shadow: 2px 2px 4px #000; opacity: 0;"></div>
+            <div id="jiro-combo-display" class="absolute left-[70px] top-1/2 -translate-y-1/2 -translate-x-1/2 z-30 pointer-events-none font-bold text-3xl text-white" style="text-shadow: 2px 2px 4px #000; opacity: 0; width: auto; white-space: nowrap;">0</div>
+            <div id="jiro-measure-display" class="absolute left-[175px] top-1/2 -translate-y-1/2 -translate-x-1/2 z-30 pointer-events-none text-xs font-semibold text-white bg-[rgba(0,0,0,0.4)] px-2 py-0.5 rounded" style="transform: translate(-50%, -50%) translateY(-32px); white-space: nowrap;">0 / 0</div>
+            
+            <canvas id="jiro-previewCanvas" class="w-full h-full absolute top-0 left-0" style="z-index: 20; pointer-events: none;"></canvas>
+          </div>
+
+          <!-- 再生コントロールパネル -->
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; color: #aaa; background: #222; padding: 6px 12px; border-radius: 4px; border: 1px solid #333; margin-bottom: 8px;">
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="button" id="jiro-btn-play" style="background: #007bff; color: white; border: none; padding: 4px 12px; font-weight: bold;">再生</button>
+              <button class="button" id="jiro-btn-stop" style="background: #dc3545; color: white; border: none; padding: 4px 12px; font-weight: bold;">停止</button>
+              <span id="jiro-time-display">0.00 / 0.00s</span>
+              <span id="music-filename-display" style="padding: 2px 6px; background: #333; border-radius: 3px; font-size: 10px; color: #888;">音源: 未選択</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <label style="display: flex; align-items: center; gap: 3px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="jiro-chk-auto" checked style="cursor: pointer;">
+                <span>AUTO</span>
+              </label>
+              <span style="margin-left: 8px;">音量:</span>
+              <input type="range" id="jiro-vol-music" min="0" max="100" value="80" style="width: 50px; height: 3px; cursor: pointer;">
+              <span>SE:</span>
+              <input type="range" id="jiro-vol-se" min="0" max="100" value="80" style="width: 50px; height: 3px; cursor: pointer;">
+            </div>
+          </div>
+
+          <!-- シークバー -->
+          <div style="width: 100%; display: flex; align-items: center;">
+            <input type="range" id="jiro-seekbar" min="0" max="1000" value="0" style="width: 100%; height: 5px; cursor: pointer;">
+          </div>
+          
+          <!-- ミニキーボード解説 -->
+          <div style="width: 100%; margin-top: 8px; text-align: left; font-size: 10px; color: #555; line-height: 1.4; border-top: 1px solid #2a2a2a; padding-top: 6px;">
+            ※ [Space] で再生/一時停止。停止中 [←]/[→] で1小節シークします。<br>
+            ※ ドン: [F], [J]、カッ: [D], [K] (プレビュー枠をフォーカスした状態でキーを押してください)
+          </div>
+        </div>
+      </div>
+      
+      <div class="page page-statistics is-hidden">
+        <h2>譜面情報</h2>
+        <span id="st-title" class="st-main-title"></span>
+        <span id="st-subtitle" class="st-main-subtitle"></span>
+        <div class="stat-row"><span class="stat-label">難易度</span><span id="st-diff"></span></div>
+        <div class="stat-row"><span class="stat-label">BPM</span><span id="st-bpm"></span></div>
+        <div class="stat-row"><span class="stat-label">ノーツ数</span><span id="st-notes"></span></div>
+        <div class="stat-row"><span class="stat-label">演奏時間</span><span id="st-time"></span></div>
+        <div class="stat-row"><span class="stat-label">平均密度</span><span id="st-density"></span></div>
+        <div class="stat-row" style="flex-direction: column; border-bottom: none; margin-top: 6px;">
+          <span class="stat-label" style="width: 100%; margin-bottom: 4px;">連打情報</span>
+          <div id="st-renda" style="font-size: 11px; line-height: 1.4; color: #e0e0e0; padding-left: 8px;"></div>
+        </div>
+        <div class="density-graph-container">
+          <h3>平均密度の推移</h3>
+          <div id="density-svg-wrapper"><svg id="density-svg" class="stat-graph"></svg></div>
+        </div>
+      </div>
+      <div class="page page-gradation is-hidden">
+        <h2>グラデーション設定</h2>
+        <div id="grad-list" style="margin-bottom:10px; font-size:11px; color:#555;">独自コマンドを解析します</div>
+        <button class="button" id="btn-grad-replace" style="width:100%; background:#007bff; color:white;">#SCROLLを置換</button>
+        
+        <div style="margin-top:15px; text-align:left; font-size:11px; line-height:1.6; color:#444; border-top:1px solid #ddd; padding-top:10px;">
+          <strong style="color:#000;">【記述形式】</strong><br>
+          <code style="background:#eee; padding:2px 4px; border-radius:3px;">#GRADSTART 開始HS 終了HS [a加速係数]</code><br>
+          （譜面データ・BPM変化等）<br>
+          <code style="background:#eee; padding:2px 4px; border-radius:3px;">#GRADEND</code><br><br>
+
+          <strong style="color:#000;">■ 等差モード（線形変化）</strong><br>
+          例：<code style="color:#d63384;">#GRADSTART 1.0 2.0</code><br>
+          時間経過に応じて、スクロール速度が一定 of 割合で滑らかに変化します。<br><br>
+
+          <strong style="color:#000;">■ 等比モード（曲線変化）</strong><br>
+          例：<code style="color:#d63384;">#GRADSTART 1.0 2.0 a2.0</code><br>
+          「a + 数値」を指定します。加速係数に基づいた指数関数的な変化（擬似加速・減速）を行います。
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="area-footer">
+  <div class="button-group controls-diff">
+    <span class="button btn-diff-0 is-hidden" data-value='0'>かんたん</span>
+    <span class="button btn-diff-1 is-hidden" data-value='1'>ふつう</span>
+    <span class="button btn-diff-2 is-hidden" data-value='2'>むずかしい</span>
+    <span class="button btn-diff-3 is-hidden" data-value='3'>おに</span>
+    <span class="button btn-diff-4 is-hidden" data-value='4'>裏おに</span>
+  </div>
+  <div class="button-group controls-page">
+    <span class="button btn-page-editor is-active" data-value='editor'>エディタ</span>
+    <span class="button btn-page-preview" data-value='preview'>プレビュー</span>
+    <span class="button btn-page-statistics" data-value='statistics'>情報</span>
+    <span class="button btn-page-gradation" data-value='gradation'>グラデ</span>
+    <button class="button" style="background:#6c757d; color:white; border:none;" id="btn-open">読込</button>
+    <button class="button" style="background:#28a745; color:white; border:none;" id="btn-tja-save">TJA</button>
+    <button class="button" style="background:#28a745; color:white; border:none;" id="btn-save">PNG</button>
+    <input type="file" id="file-input" class="is-hidden" accept="*/*">
+    <div style="margin-left:auto; display:flex; gap:2px;">
+        <button class="button" id="zoom-out" style="width:34px;">－</button>
+        <button class="button" id="zoom-in" style="width:34px;">＋</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+/** 定数 **/
+const CHART_PADDING_TOP = 130, CHART_PADDING_BOTTOM = 20, CHART_BG = '#cccccc';
+const ROW_MARGIN_BOTTOM = 20, ROW_HEIGHT_INFO = 18, ROW_HEIGHT_NOTE = 34, ROW_HEIGHT = ROW_HEIGHT_INFO + ROW_HEIGHT_NOTE;
+const ROW_OFFSET_NOTE_CENTER = ROW_HEIGHT_INFO + (ROW_HEIGHT_NOTE / 2), ROW_LEADING = 30, ROW_TRAILING = 30, BEAT_WIDTH = 48, NOTE_RADIUS = 9;
+
+const formatBpm = (val) => Math.round(val * 1000) / 1000;
+const getNoteX = (beat) => ROW_LEADING + (beat * BEAT_WIDTH);
+const getRowY = (row) => CHART_PADDING_TOP + ((ROW_HEIGHT + ROW_MARGIN_BOTTOM) * row);
+
+/** mc2tja 統合ロジック **/
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const lcm = (a, b) => (a === 0 || b === 0) ? 0 : Math.abs(a * b) / gcd(a, b);
+
+function convertMCtoTJA(mcContent) {
+    const mc = JSON.parse(mcContent); 
+    let tja = "";
+    const balloons = mc.note.filter(n => n.style === 6 && n.hits).map(n => n.hits).join(',');
+    
+    let metaEvents = [];
+    if (mc.time) metaEvents = metaEvents.concat(mc.time);
+    if (mc.effect) metaEvents = metaEvents.concat(mc.effect);
+    
+    const firstBpmEvent = metaEvents.find(t => t.bpm !== undefined);
+    const initialBpm = firstBpmEvent ? firstBpmEvent.bpm : 120;
+    
+    const barBegin = mc.meta.mode_ext ? (mc.meta.mode_ext.bar_begin || 0) : 0;
+    const mcNoteWithOffset = mc.note.find(n => n.sound);
+    const mcOffset = mcNoteWithOffset ? (mcNoteWithOffset.offset || 0) : 0;
+    const tjaOffsetValue = -(60 / initialBpm * barBegin) + (mcOffset / 1000);
+
+    tja += `TITLE:${mc.meta.song.title || ""}\nSUBTITLE:--${mc.meta.song.artist || ""}\nBPM:${formatBpm(initialBpm)}\nWAVE:${mc.note.find(n => n.sound)?.sound || ""}\nOFFSET:${tjaOffsetValue.toFixed(3)}\nDEMOSTART:${mc.meta && mc.meta.preview ? (mc.meta.preview / 1000).toFixed(3) : "0"}\n\nCOURSE:Oni\nLEVEL:${mc.meta.version ? mc.meta.version.replace(/[^0-9]/g, '') : "10"}\nBALLOON:${balloons}\n\n#START\n`;
+    
+    metaEvents.forEach(t => { 
+        t.adjustedBeat = t.beat[0] + (t.beat[1] / t.beat[2]) - barBegin; 
+    });
+
+    let signEvents = metaEvents
+        .filter(t => t.sign !== undefined)
+        .map(t => ({ tb: t.adjustedBeat, sign: parseInt(t.sign, 10), original: t }))
+        .filter(t => t.tb >= 0)
+        .sort((a, b) => a.tb - b.tb);
+
+    let currentSign = 4;
+    let bars = [];
+    let curTb = 0;
+    let barIdx = 0;
+    
+    if (signEvents.length > 0 && signEvents[0].tb <= 1e-6) {
+        currentSign = signEvents[0].sign;
+        signEvents = signEvents.filter(t => t.tb > 1e-6);
+    }
+
+    let maxTb = 0;
+    mc.note.forEach(n => {
+        let tb = n.beat[0] + (n.beat[1] / n.beat[2]) - barBegin;
+        if (n.endbeat) {
+            let etb = n.endbeat[0] + (n.endbeat[1] / n.endbeat[2]) - barBegin;
+            if (etb > maxTb) maxTb = etb;
+        }
+        if (tb > maxTb) maxTb = tb;
+    });
+    metaEvents.forEach(t => {
+        if (t.adjustedBeat > maxTb) maxTb = t.adjustedBeat;
+    });
+
+    while (curTb <= maxTb + currentSign) {
+        let nextEvent = signEvents.length > 0 ? signEvents[0] : null;
+        let nextTb = curTb + currentSign;
+        
+        if (nextEvent && nextEvent.tb <= curTb + 1e-6) {
+            currentSign = nextEvent.sign;
+            nextTb = curTb + nextEvent.sign;
+            while(signEvents.length > 0 && signEvents[0].tb <= curTb + 1e-6) {
+                currentSign = signEvents[0].sign;
+                nextTb = curTb + currentSign;
+                signEvents.shift();
+            }
+            nextEvent = signEvents.length > 0 ? signEvents[0] : null;
+        }
+        
+        if (nextEvent && nextEvent.tb < nextTb - 1e-6) {
+            nextTb = nextEvent.tb;
+        }
+        
+        let actualBeats = nextTb - curTb;
+        if (actualBeats <= 0) {
+            actualBeats = currentSign;
+            nextTb = curTb + actualBeats;
+        }
+        
+        bars.push({ startTb: curTb, endTb: nextTb, sign: currentSign, actualBeats: actualBeats, barIdx: barIdx });
+        barIdx++;
+        curTb = nextTb;
+        
+        if (curTb > maxTb + currentSign) break;
+    }
+
+    function getBarInfo(tb) {
+        let found = bars[0];
+        for (let i = 0; i < bars.length; i++) {
+            if (tb >= bars[i].startTb - 1e-6) {
+                found = bars[i];
+            } else {
+                break;
+            }
+        }
+        return found;
+    }
+
+    const notesByBar = {}; 
+    const endbeatsByBar = {};
+    const bpmChangesByBar = {}; 
+    
+    mc.note.forEach(n => { 
+        if (n.hasOwnProperty('column')) { 
+            const tb = n.beat[0] + (n.beat[1] / n.beat[2]) - barBegin; 
+            if (tb < 0) return; 
+            const bar = getBarInfo(tb);
+            const bi = bar.barIdx;
+            if (!notesByBar[bi]) notesByBar[bi] = []; 
+            notesByBar[bi].push({...n, bib: tb - bar.startTb}); 
+            
+            if (n.endbeat) {
+                const etb = n.endbeat[0] + (n.endbeat[1] / n.endbeat[2]) - barBegin; 
+                if (etb >= 0) {
+                    const ebar = getBarInfo(etb);
+                    const ebi = ebar.barIdx;
+                    if (!endbeatsByBar[ebi]) endbeatsByBar[ebi] = [];
+                    endbeatsByBar[ebi].push({ bib: etb - ebar.startTb, split: n.endbeat[2] });
+                }
+            }
+        } 
+    });
+    
+    metaEvents.forEach(t => { 
+        if (t.bpm === undefined && t.sign === undefined) return;
+        const tb = t.adjustedBeat; 
+        if (tb < 0) return; 
+        const bar = getBarInfo(tb);
+        const bi = bar.barIdx; 
+        if (!bpmChangesByBar[bi]) bpmChangesByBar[bi] = []; 
+        bpmChangesByBar[bi].push({...t, bib: tb - bar.startTb, _isInit: t === firstBpmEvent}); 
+    });
+    
+    for (let b = 0; b < bars.length; b++) {
+        const bar = bars[b];
+        const barBeats = bar.actualBeats; 
+        
+        if (bar.startTb > maxTb + 1e-6) break;
+        
+        const cn = notesByBar[b] || []; 
+        const ce = endbeatsByBar[b] || [];
+        const cb = bpmChangesByBar[b] || []; 
+        
+        let barLCM = 1;
+        const MAX_LCM = 3840;
+        
+        const updateLCM = (bib, beatDenom) => {
+            const num = Math.round(bib * beatDenom);
+            const den = Math.round(barBeats * beatDenom);
+            if (den === 0) return;
+            let g = gcd(num, den);
+            if (g === 0) g = 1;
+            const target = Math.round(den / g);
+            barLCM = lcm(barLCM, target);
+            if (barLCM > MAX_LCM || !isFinite(barLCM)) barLCM = MAX_LCM;
+        };
+
+        cn.forEach(n => updateLCM(n.bib, n.beat[2] || 1));
+        ce.forEach(e => updateLCM(e.bib, e.split || 1));
+        cb.forEach(t => updateLCM(t.bib, t.beat[2] || 1));
+        
+        if (barLCM > MAX_LCM) barLCM = MAX_LCM;
+        if (barLCM <= 0 || !isFinite(barLCM)) barLCM = 1;
+        
+        const bChars = new Array(barLCM).fill('0'); 
+        const bTicks = {};
+        
+        cb.forEach(t => { 
+            const pos = Math.round((t.bib / barBeats) * barLCM); 
+            let cmds = bTicks[pos] ? bTicks[pos].split('\n') : [];
+            if (t.sign !== undefined) {
+                const measureVal = parseInt(t.sign, 10);
+                cmds = cmds.filter(x => !x.startsWith('#MEASURE'));
+                cmds.push(`#MEASURE ${measureVal}/4`);
+            }
+            if (t.bpm !== undefined && !t._isInit) {
+                cmds = cmds.filter(x => !x.startsWith('#BPMCHANGE'));
+                cmds.push(`#BPMCHANGE ${formatBpm(t.bpm)}`);
+            }
+            if (cmds.length) bTicks[pos] = cmds.join('\n');
+        });
+        
+        cn.forEach(n => { 
+            const pos = Math.round((n.bib / barBeats) * barLCM);
+            let type = "1"; 
+            if (n.style === 2) type = "2"; 
+            if (n.style === 1) type = "3"; 
+            if (n.style === 3) type = "4"; 
+            if (n.style === 4) type = "5"; 
+            if (n.style === 5) type = "6"; 
+            if (n.style === 6) type = "7";
+            if (pos >= 0 && pos < barLCM) bChars[pos] = type;
+        });
+
+        ce.forEach(e => {
+            const pos = Math.round((e.bib / barBeats) * barLCM);
+            if (pos >= 0 && pos < barLCM) {
+                if (bChars[pos] === '0') {
+                    bChars[pos] = "8";
+                } else if (parseInt(bChars[pos]) < 5) {
+                    bChars[pos] = "8"; 
+                }
+            }
+        });
+        
+        let bOut = ""; 
+        for (let i = 0; i < barLCM; i++) { 
+            if (bTicks[i]) bOut += (bOut === "" ? "" : "\n") + bTicks[i] + "\n"; 
+            bOut += bChars[i]; 
+        }
+        
+        tja += bOut + ",\n";
+    }
+    tja += "#END"; return tja;
+}
+
+async function loadFileWithEncoding(arrayBuffer) {
+    const ui8 = new Uint8Array(arrayBuffer);
+    try { return new TextDecoder('utf-8', {fatal: true}).decode(ui8); } 
+    catch(e) { return new TextDecoder('shift-jis').decode(ui8); }
+}
+
+function parseTJA(tja) {
+  const lines = tja.split(/\r?\n/).map(l => l.trim());
+  const headers = { title: '', subtitle: '', bpm: 120, wave: '' };
+  const courses = {}; let currentCourse = null, dataBuf = "", eventBuf = [], currentMeasure = [4, 4];
+  for (let line of lines) {
+    const raw = line.split('//')[0].trim(); if (!raw) continue;
+    if (raw.startsWith('TITLE:')) headers.title = raw.substring(6).trim();
+    else if (raw.startsWith('SUBTITLE:')) headers.subtitle = raw.substring(9).trim().replace(/^--\s*/, '').replace(/^[+-]/, '');
+    else if (raw.startsWith('BPM:')) headers.bpm = parseFloat(raw.substring(4)) || 120;
+    else if (raw.startsWith('WAVE:')) headers.wave = raw.substring(5).trim();
+    else if (raw.startsWith('OFFSET:')) headers.offset = parseFloat(raw.substring(7)) || 0;
+    else if (raw.startsWith('COURSE:')) {
+      const cv = raw.substring(7).trim().toLowerCase();
+      let id = 0; if (cv === 'normal' || cv === '1') id = 1; else if (cv === 'hard' || cv === '2') id = 2; else if (cv === 'oni' || cv === '3') id = 3; else if (cv === 'edit' || cv === '4') id = 4;
+      currentCourse = { course: id, headers: { level: 0, balloon: [], ttRowBeat: 16 }, measures: [] };
+      courses[id] = currentCourse; dataBuf = ""; eventBuf = [];
+    } else if (currentCourse) {
+      if (raw.startsWith('LEVEL:')) currentCourse.headers.level = parseInt(raw.substring(6));
+      else if (raw.startsWith('BALLOON:')) currentCourse.headers.balloon = raw.substring(8).split(/[, ]+/).filter(x=>x).map(Number);
+      else if (raw.match(/^#([A-Z]+)(?:\s+(.+))?/i)) {
+        const m = raw.match(/^#([A-Z]+)(?:\s+(.+))?/i);
+        if (m[1].toUpperCase() === 'MEASURE' && m[2]) {
+            const p = m[2].split('/').map(Number);
+            if (p.length === 2 && p[1] !== 0 && !isNaN(p[0]) && !isNaN(p[1])) currentMeasure = p;
+        }
+        eventBuf.push({ name: m[1].toLowerCase(), value: m[2] || '', pos: dataBuf.length });
+      } else if (raw.match(/^[0-9A-G,]*$/)) {
+        for (let char of raw) {
+          if (char === ',') { currentCourse.measures.push({ length: [...currentMeasure], data: dataBuf, events: [...eventBuf] }); dataBuf = ""; eventBuf = []; }
+          else dataBuf += char;
+        }
+      }
+    }
+  }
+  return { headers, courses };
+}
+
+const drawLine = (ctx, sx, sy, ex, ey, w, s) => { ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.lineWidth = w; ctx.strokeStyle = s; ctx.stroke(); };
+const drawRect = (ctx, x, y, w, h, f) => { ctx.fillStyle = f; ctx.fillRect(x, y, w, h); };
+const drawCircle = (ctx, x, y, r, f) => { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fillStyle = f; ctx.fill(); };
+const drawText = (ctx, x, y, t, f, c, b = 'middle', a = 'center') => { ctx.font = f; ctx.textBaseline = b; ctx.textAlign = a; ctx.fillStyle = c; ctx.fillText(t, x, y); };
+const drawPixelText = (ctx, x, y, t, c, b = 'middle', a = 'center') => { drawText(ctx, x, y, t, '10px "Pixel 3x5"', c, b, a); };
+
+function drawNote(ctx, x, y, c, b) { const r = b ? NOTE_RADIUS + 3 : NOTE_RADIUS; drawCircle(ctx, x, y, r, '#000'); drawCircle(ctx, x, y, r-1, '#fff'); drawCircle(ctx, x, y, r-2, c); }
+function drawBalloon(ctx, ri, nb, eb, count) {
+  const x = getNoteX(nb), y = getRowY(ri) + ROW_OFFSET_NOTE_CENTER, ex = getNoteX(eb);
+  ctx.lineCap = 'round'; ctx.strokeStyle = '#000'; ctx.lineWidth = NOTE_RADIUS * 2; drawLine(ctx, x, y, ex, y, ctx.lineWidth, '#000');
+  ctx.strokeStyle = '#fff'; ctx.lineWidth -= 2; drawLine(ctx, x, y, ex, y, ctx.lineWidth, '#fff');
+  ctx.strokeStyle = '#fb4'; ctx.lineWidth -= 2; drawLine(ctx, x, y, ex, y, ctx.lineWidth, '#fb4');
+  drawCircle(ctx, x, y, NOTE_RADIUS, '#000'); drawCircle(ctx, x, y, NOTE_RADIUS-1, '#fff'); drawCircle(ctx, x, y, NOTE_RADIUS-2, '#fb4');
+  drawRect(ctx, x, y-3, 5, 6, '#fb4'); drawPixelText(ctx, x, y+0.5, count.toString(), '#000'); ctx.lineCap = 'butt';
+}
+function renderPath(ctx, rs, sR, sB, eR, eB) {
+  ctx.beginPath(); let sx = getNoteX(sB), sy = getRowY(sR) + ROW_OFFSET_NOTE_CENTER, ex = getNoteX(eB), ey = getRowY(eR) + ROW_OFFSET_NOTE_CENTER;
+  if (sR === eR) { ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); }
+  else { ctx.moveTo(sx, sy); ctx.lineTo(getNoteX(16) + ROW_TRAILING, sy); for (let r = sR + 1; r < eR; r++) { ctx.moveTo(0, getRowY(r) + ROW_OFFSET_NOTE_CENTER); ctx.lineTo(getNoteX(16) + ROW_TRAILING, getRowY(r) + ROW_OFFSET_NOTE_CENTER); } ctx.moveTo(0, ey); ctx.lineTo(ex, ey); } ctx.stroke();
+}
+
+function drawChart(chart, courseId) {
+  const course = chart.courses[courseId]; if (!course) return document.createElement('canvas');
+  const dNames = ['かんたん', 'ふつう', 'むずかしい', 'おに', '裏おに'];
+  const rows = []; let rTemp = [], rBeat = 0;
+  course.measures.forEach(m => { const mb = (m.length[0] / m.length[1]) * 4; if (16 < rBeat + mb) { rows.push({ beats: rBeat, measures: rTemp }); rTemp = []; rBeat = 0; } rTemp.push(m); rBeat += mb; });
+  if (rTemp.length) rows.push({ beats: rBeat, measures: rTemp });
+  const cW = ROW_LEADING + (BEAT_WIDTH * 16) + ROW_TRAILING;
+  const cH = CHART_PADDING_TOP + ((ROW_HEIGHT + ROW_MARGIN_BOTTOM) * rows.length) + CHART_PADDING_BOTTOM;
+  const dpr = window.devicePixelRatio || 1;
+  const canvas = document.createElement('canvas'); canvas.width = cW * dpr; canvas.height = cH * dpr;
+  canvas.style.width = cW + 'px'; canvas.style.height = cH + 'px';
+  const ctx = canvas.getContext('2d'); 
+  ctx.imageSmoothingEnabled = false;
+  ctx.scale(dpr, dpr);
+  drawRect(ctx, 0, 0, cW, cH, CHART_BG);
+  drawText(ctx, 20, 20, chart.headers.title, 'bold 28px sans-serif', '#000', 'top', 'left');
+  if(chart.headers.subtitle) drawText(ctx, 20, 52, chart.headers.subtitle, 'bold 18px sans-serif', '#000', 'top', 'left');
+  drawText(ctx, 20, 84, `${dNames[course.course]} ${'★'.repeat(course.headers.level)}`, 'bold 16px sans-serif', '#000', 'top', 'left');
+
+  let gActive = false, gStart = null;
+  rows.forEach((row, ri) => {
+    let bAcc = 0;
+    row.measures.forEach(m => {
+      const mb = (m.length[0]/m.length[1])*4;
+      m.events.forEach(e => {
+        const eb = bAcc + (mb / (m.data.length || 1)) * e.pos;
+        if (e.name === 'gogostart') { gActive = true; gStart = [ri, eb]; }
+        if (e.name === 'gogoend' && gActive) {
+          const hG = ROW_HEIGHT;
+          if (gStart[0] === ri) drawRect(ctx, getNoteX(gStart[1]), getRowY(ri), getNoteX(eb)-getNoteX(gStart[1]), hG, '#fbb');
+          else { drawRect(ctx, getNoteX(gStart[1]), getRowY(gStart[0]), getNoteX(16) - getNoteX(gStart[1]) + ROW_TRAILING, hG, '#fbb'); for(let r=gStart[0]+1; r<ri; r++) drawRect(ctx, 0, getRowY(r), cW, hG, '#fbb'); drawRect(ctx, 0, getRowY(ri), getNoteX(eb), hG, '#fbb'); }
+          gStart = null; gActive = false;
+        }
+      });
+      bAcc += mb;
+    });
+    if (gActive && gStart) { drawRect(ctx, getNoteX(gStart[1]), getRowY(gStart[0]), getNoteX(16)-getNoteX(gStart[1])+ROW_TRAILING, ROW_HEIGHT, '#fbb'); gStart = [ri+1, 0]; }
+  });
+
+  rows.forEach((row, ri) => {
+    const y = getRowY(ri); drawRect(ctx, 0, y + ROW_HEIGHT_INFO, cW, ROW_HEIGHT_NOTE, '#000'); drawRect(ctx, 0, y + ROW_HEIGHT_INFO + 2, cW, ROW_HEIGHT_NOTE - 4, '#fff'); drawRect(ctx, 0, y + ROW_HEIGHT_INFO + 4, cW, ROW_HEIGHT_NOTE - 8, '#999');
+    let bAcc = 0;
+    row.measures.forEach((m, mi) => {
+      const mb = (m.length[0]/m.length[1])*4;
+      for(let g=0; g<mb; g+=0.5) { const gx = getNoteX(bAcc + g); drawLine(ctx, gx, y+ROW_HEIGHT_INFO, gx, y+ROW_HEIGHT, g%1===0 ? 0.8 : 0.4, '#ffffff66'); }
+      drawLine(ctx, getNoteX(bAcc), y, getNoteX(bAcc), y + ROW_HEIGHT, 1.2, '#fff');
+      drawPixelText(ctx, getNoteX(bAcc) + 2, y + 17, (mi + 1 + rows.slice(0,ri).reduce((a,b)=>a+b.measures.length,0)).toString(), '#000', 'bottom', 'left');
+      if(ri === 0 && mi === 0) drawPixelText(ctx, getNoteX(bAcc) + 2, y + 11, formatBpm(chart.headers.bpm).toString(), '#00f', 'bottom', 'left');
+      m.events.forEach(e => {
+        if (e.name === 'bpmchange' || e.name === 'scroll') {
+          const ex = getNoteX(bAcc + (mb / (m.data.length || 1)) * e.pos); drawLine(ctx, ex, y, ex, y + ROW_HEIGHT, 1, '#444');
+          const isBPM = e.name === 'bpmchange'; drawPixelText(ctx, ex + 2, isBPM ? y + 11 : y + 5, e.value.toString(), isBPM ? '#00f' : '#f00', 'bottom', 'left');
+        }
+      });
+      bAcc += mb;
+    });
+    drawLine(ctx, getNoteX(bAcc), y, getNoteX(bAcc), y + ROW_HEIGHT, 1.5, '#fff');
+  });
+
+  let lEnd = null;
+  let totalBalloons = 0;
+  rows.forEach(row => {
+    row.measures.forEach(m => {
+      for (let i = 0; i < m.data.length; i++) {
+        if (m.data[i] === '7') totalBalloons++;
+      }
+    });
+  });
+  let bIdx = totalBalloons - 1;
+
+  for (let ri = rows.length - 1; ri >= 0; ri--) {
+    const row = rows[ri]; let ab = 0; row.measures.forEach(m => { m.absB = ab; ab += (m.length[0]/m.length[1])*4; });
+    for (let mi = row.measures.length - 1; mi >= 0; mi--) {
+      const m = row.measures[mi]; const mb = (m.length[0]/m.length[1])*4;
+      for (let i = m.data.length - 1; i >= 0; i--) {
+        const note = m.data[i], nb = m.absB + (mb / m.data.length) * i;
+        const nx = getNoteX(nb), ny = getRowY(ri) + ROW_OFFSET_NOTE_CENTER;
+        if (note === '8') lEnd = [ri, nb];
+        else if (note === '1') drawNote(ctx, nx, ny, '#f33', false);
+        else if (note === '2') drawNote(ctx, nx, ny, '#5cf', false);
+        else if (note === '3') drawNote(ctx, nx, ny, '#f33', true);
+        else if (note === '4') drawNote(ctx, nx, ny, '#5cf', true);
+        else if (note === '7' && lEnd) { drawBalloon(ctx, ri, nb, lEnd[1], course.headers.balloon[bIdx--] || 5); lEnd = null; }
+        else if ((note === '5' || note === '6') && lEnd) {
+          ctx.lineCap = 'round'; ctx.strokeStyle = '#000'; ctx.lineWidth = (note === '6' ? 12 : 9) * 2;
+          renderPath(ctx, rows, ri, nb, lEnd[0], lEnd[1]); ctx.strokeStyle = '#fff'; ctx.lineWidth -= 2; renderPath(ctx, rows, ri, nb, lEnd[0], lEnd[1]);
+          ctx.strokeStyle = '#fe4'; ctx.lineWidth -= 2; renderPath(ctx, rows, ri, nb, lEnd[0], lEnd[1]); ctx.lineCap = 'butt'; lEnd = null;
+        }
+      }
+    }
+  }
+  return canvas;
+}
+
+/** 統計ロジック **/
+function getStats(chart, courseId) {
+  const course = chart.courses[courseId];
+  let combo = 0, firstT = null, lastT = 0, currentBpm = chart.headers.bpm;
+  let bpmMap = new Map(); let bpms = [currentBpm], allNoteTimes = [], rendaSecs = [], rStartT = null;
+  let currentTime = 0;
+  course.measures.forEach((m) => {
+    const mb = (m.length[0] / m.length[1]) * 4; const nis = m.data.length || 1; const duration = (60 / currentBpm) * mb;
+    for (let i = 0; i < m.data.length; i++) {
+        const char = m.data[i]; const t = currentTime + (duration * i / nis);
+        if ("13".includes(char)) { allNoteTimes.push({ time: t, type: 'don' }); combo++; if (firstT === null) firstT = t; lastT = t; }
+        else if ("24".includes(char)) { allNoteTimes.push({ time: t, type: 'ka' }); combo++; if (firstT === null) firstT = t; lastT = t; }
+        else if (char === "5" || char === "6") rStartT = t;
+        else if (char === "8" && rStartT !== null) { rendaSecs.push(t - rStartT); rStartT = null; }
+    }
+    bpmMap.set(currentBpm, (bpmMap.get(currentBpm) || 0) + duration);
+    m.events.forEach(e => { if(e.name === 'bpmchange') { currentBpm = parseFloat(e.value); bpms.push(currentBpm); } });
+    currentTime += duration;
+  });
+  const perfTime = lastT - firstT;
+  let measureData = [];
+  for (let i = 0; i < 100; i++) {
+    const start = firstT + i * (perfTime / 100); const end = start + (perfTime / 100);
+    const notesInWindow = allNoteTimes.filter(n => n.time >= start && n.time < end);
+    measureData.push({ don: notesInWindow.filter(n => n.type === 'don').length, ka: notesInWindow.filter(n => n.type === 'ka').length, nps: notesInWindow.length / (perfTime / 100 || 1) });
+  }
+  const mainBpm = bpmMap.size ? [...bpmMap.entries()].reduce((a, b) => a[1] > b[1] ? a : b)[0] : currentBpm;
+  return { combo, perfTime, minBpm: Math.min(...bpms), maxBpm: Math.max(...bpms), mainBpm, density: (combo - 1) / (perfTime || 1), measures: measureData, rendas: rendaSecs };
+}
+
+function drawDensityGraph(measureData) {
+  const container = u('#density-svg-wrapper').first(); const width = container.clientWidth; const height = 100;
+  const margin = { left: 25, right: 5, top: 10, bottom: 5 };
+  const svg = d3.select("#density-svg").attr("width", width).attr("height", height + 25).html("");
+  const x = d3.scaleBand().domain(d3.range(measureData.length)).range([margin.left, width - margin.right]).padding(0.1);
+  const y = d3.scaleLinear().domain([0, d3.max(measureData, d => d.nps) * 1.1 || 10]).range([height, margin.top]);
+  svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-width + margin.left + margin.right)).attr("color", "#444");
+  const layers = d3.stack().keys(["don", "ka"])(measureData.map(d => { const total = (d.don + d.ka) || 1; return { don: (d.don / total) * d.nps, ka: (d.ka / total) * d.nps }; }));
+  svg.append("g").selectAll("g").data(layers).enter().append("g").attr("fill", (d, i) => i === 0 ? "#f33" : "#5cf")
+     .selectAll("rect").data(d => d).enter().append("rect").attr("x", (d, i) => x(i)).attr("y", d => y(d[1])).attr("height", d => y(d[0]) - y(d[1])).attr("width", x.bandwidth());
+}
+
+/** グラデーション置換ロジック **/
+function replaceGradation() {
+    const editor = u('.input').first();
+    let text = editor.value;
+
+    const getInitialState = (fullText, startIndex) => {
+        let bpm = 120, measure = [4, 4];
+        const lines = fullText.substring(0, startIndex).split(/\r?\n/);
+        for (let line of lines) {
+            const rawLine = line.split('//')[0].trim();
+            if (!rawLine) continue;
+            const parts = rawLine.split(/[ \t]+/);
+            const cmdName = parts[0].toUpperCase();
+
+            if (rawLine.toUpperCase().startsWith('BPM:')) bpm = parseFloat(rawLine.substring(4).trim()) || bpm;
+            if (cmdName === '#BPMCHANGE') bpm = parseFloat(parts[1]) || bpm;
+            if (cmdName === '#MEASURE') {
+                const v = parts[1];
+                if (v && v.includes('/')) {
+                    const p = v.split('/');
+                    measure = [parseInt(p[0]) || 4, parseInt(p[1]) || 4];
+                }
+            }
+        }
+        return { bpm, measure };
+    };
+
+    const checkNesting = (targetText) => {
+        const startIndices = [];
+        const endIndices = [];
+        let sPos = targetText.indexOf('#GRADSTART');
+        while (sPos !== -1) { startIndices.push(sPos); sPos = targetText.indexOf('#GRADSTART', sPos + 10); }
+        let ePos = targetText.indexOf('#GRADEND');
+        while (ePos !== -1) { endIndices.push(ePos); ePos = targetText.indexOf('#GRADEND', ePos + 8); }
+        if (startIndices.length !== endIndices.length) throw new Error("エラー: #GRADSTART と #GRADEND の対が一致しません。");
+        const segments = [];
+        for (let i = 0; i < startIndices.length; i++) {
+            if (i < startIndices.length - 1 && startIndices[i + 1] < endIndices[i]) {
+                throw new Error(`エラー: 行 ${targetText.substring(0, startIndices[i + 1]).split('\n').length} 付近で入れ子を検出しました。`);
+            }
+            segments.push({ start: startIndices[i], end: endIndices[i] + 8 });
+        }
+        return segments;
+    };
+
+    const isNote = (token) => token.length === 1 && /^[0-9A-G]$/i.test(token);
+
+    try {
+        const segments = checkNesting(text);
+        if (segments.length === 0) return;
+
+        for (let i = segments.length - 1; i >= 0; i--) {
+            const seg = segments[i];
+            const blockRaw = text.substring(seg.start, seg.end);
+            const headerMatch = blockRaw.match(/#GRADSTART\s+([^\n]+)/);
+            if (!headerMatch) continue;
+
+            const args = headerMatch[1].trim().split(/\s+/);
+            const sHS = parseFloat(args[0]), eHS = parseFloat(args[1]);
+            const accelArg = args.find(a => a.toLowerCase().startsWith('a'));
+            const accel = accelArg ? parseFloat(accelArg.substring(1)) : 1.0;
+            const hasAccel = !!accelArg;
+
+            const content = blockRaw.substring(headerMatch[0].length, blockRaw.lastIndexOf('#GRADEND')).trim();
+            const initialState = getInitialState(text, seg.start);
+            let curBPM = initialState.bpm, curMeas = [...initialState.measure], totalTime = 0;
+            let timeline = [];
+
+            const tokens = content.match(/(#[A-Z0-9_]+(?:[ \t]+[^\n\r]+)?|[0-9A-G]|,)/gi) || [];
+            let measures = [], tempM = [];
+            
+            tokens.forEach(t => { 
+                tempM.push(t); 
+                if (t === ',') { measures.push(tempM); tempM = []; } 
+            });
+            if (tempM.length) measures.push(tempM);
+
+            measures.forEach((mTokens) => {
+                if (mTokens.filter(isNote).length === 0) {
+                    const commaIdx = mTokens.lastIndexOf(',');
+                    if (commaIdx !== -1) {
+                        mTokens.splice(commaIdx, 0, '0');
+                    } else {
+                        mTokens.push('0');
+                    }
+                }
+
+                const notesInMeas = mTokens.filter(isNote);
+                const noteCount = notesInMeas.length;
+
+                let noteIndex = 0;
+
+                mTokens.forEach((t) => {
+                    if (isNote(t)) {
+                        const measureBeats = (curMeas[0] / curMeas[1]) * 4;
+                        const measureDuration = (60 / curBPM) * measureBeats;
+                        const noteInterval = measureDuration / noteCount;
+                        
+                        timeline.push({ type: 'note', value: t, time: totalTime, isFirst: noteIndex === 0 });
+                        
+                        totalTime += noteInterval;
+                        noteIndex++;
+                    } 
+                    else if (t === ',') {
+                        timeline.push({ type: 'comma', value: ',', time: totalTime });
+                    } 
+                    else if (t.startsWith('#')) {
+                        const cmdParts = t.trim().split(/[ \t]+/);
+                        const cmdName = cmdParts[0].toUpperCase();
+
+                        if (cmdName === '#BPMCHANGE') {
+                            curBPM = parseFloat(cmdParts[1]) || curBPM;
+                            timeline.push({ type: 'cmd', value: t, time: totalTime });
+                        } 
+                        else if (cmdName === '#MEASURE') {
+                            const v = cmdParts[1];
+                            if (v && v.includes('/')) {
+                                const p = v.split('/');
+                                curMeas = [parseInt(p[0]) || 4, parseInt(p[1]) || 4];
+                            }
+                            timeline.push({ type: 'cmd', value: t, time: totalTime });
+                        } 
+                        else if (cmdName === '#DELAY') {
+                            const dVal = parseFloat(cmdParts[1]) || 0;
+                            timeline.push({ type: 'cmd', value: t, time: totalTime });
+                            totalTime += dVal;
+                        } 
+                        else {
+                            timeline.push({ type: 'cmd', value: t, time: totalTime });
+                        }
+                    }
+                });
+            });
+
+            let result = "", lastHS = -1;
+            const finalDuration = totalTime;
+            timeline.forEach((item, idx) => {
+                const progress = finalDuration > 0 ? Math.min(1, item.time / finalDuration) : 0;
+                let hs;
+                if (hasAccel) {
+                    hs = sHS * Math.pow(eHS / sHS, Math.pow(progress, 1 + (accel - 1) * 0.4));
+                } else {
+                    hs = sHS + (eHS - sHS) * progress;
+                }
+                hs = Math.round(hs * 1000) / 1000;
+
+                if (item.type === 'cmd') {
+                    if (hs !== lastHS) { 
+                        result += (result && !result.endsWith('\n') ? '\n' : '') + `#SCROLL ${parseFloat(hs.toFixed(3))}\n`; 
+                        lastHS = hs; 
+                    }
+                    result += item.value + "\n";
+                } 
+                else if (item.type === 'note') {
+                    if ((item.value !== '0' || item.isFirst) && hs !== lastHS) {
+                        result += (result && !result.endsWith('\n') ? '\n' : '') + `#SCROLL ${parseFloat(hs.toFixed(3))}\n`;
+                        lastHS = hs;
+                    }
+                    result += item.value;
+                } 
+                else if (item.type === 'comma') {
+                    result += ",\n";
+                    if (idx === timeline.length - 1) {
+                        result += `#SCROLL ${parseFloat(eHS.toFixed(3))}\n`;
+                    }
+                }
+            });
+            text = text.substring(0, seg.start) + result.trim() + text.substring(seg.end);
+        }
+        u('.input').first().value = text;
+        processFunc();
+    } catch (e) { u('.errors').text(e.message); }
+}
+
+/** UI Logic **/
+let tjaParsed = null, selectedDifficulty = '', selectedPage = 'editor', zoomLevel = 100;
+
+/** 次郎風プレビュー用 **/
+let audioContext = null;
+let musicAudioBuffer = null;
+let musicSourceNode = null;
+let seGainNode = null;
+let musicGainNode = null;
+const audioBuffers = {};
+
+let isPlaying = false;
+let currentElapsedTime = 0.0;
+let simulationStartOffset = 0.0;
+let simulationStartTime = 0.0;
+let lastFrameTime = 0;
+let animationFrameId = null;
+let logicIntervalId = null;
+
+let isAutoPlay = true;
+let currentCombo = 0;
+let currentMeasureIndex = 0;
+let currentChartData = null; // 太鼓さん次郎プレビュー用に変換した高精度データ
+let autoRollSpeed = 30; // オートプレイ時の秒間打鍵
+let renderFPS = 60;
+let scrollMultiplier = 1.0;
+let seVolume = 0.8;
+let musicVolume = 0.8;
+let playbackSpeed = 1.0;
+let lastAutoEffectTime = 0;
+let stopAtTime = null;
+let chartCoolDownUntil = null;
+const coolDownTime = 1.0;
+
+let playerKeys = { donL: ['F'], donR: ['J'], kaL: ['D'], kaR: ['K'] };
+let lastSEPlayTime = { don: 0, ka: 0, balloon: 0 };
+let hitEffectTimeout = { donLeft: null, donRight: null, kaLeft: null, kaRight: null };
+
+const HIT_POSITION_X_DEFAULT = 175;
+let HIT_POSITION_X = 175;
+const BASE_SCROLL_FACTOR = 2.0;
+const JPOS_INPUT_STANDARD_WIDTH = 946;
+const JPOS_ACTUAL_MEASURE_WIDTH = 480;
+
+const NOTE_COLORS = { '1': '#F44336', '2': '#2196F3', '3': '#F44336', '4': '#2196F3', '5': '#FFC107', '6': '#FFC107', '7': '#f97902' };
+const NOTE_SIZE = { '1': 15, '2': 15, '3': 22.5, '4': 22.5, '5': 15, '6': 22.5, '7': 22.5 };
+const JUDGE_PERFECT = 0.025, JUDGE_GOOD = 0.075, JUDGE_BAD = 0.107;
+
+let state_commandIndex = 0;
+let state_currentBPM = 120;
+let state_isGogo = false;
+let state_jposStartTime = -Infinity;
+let state_jposDuration = 0;
+let state_jposStartX = HIT_POSITION_X_DEFAULT;
+let state_jposEndX = HIT_POSITION_X_DEFAULT;
+let state_jposEasing = 0;
+
+let uploadedMusicFileName = "";
+let uploadedMusicObjectURL = null;
+
+function updateUI() {
+  u('.controls-diff .button').addClass('is-hidden');
+  if(tjaParsed && tjaParsed.courses) Object.keys(tjaParsed.courses).forEach(d => u(`.btn-diff-${d}`).removeClass('is-hidden'));
+  u('.button.is-active').removeClass('is-active');
+  u(`.btn-diff-${selectedDifficulty}`).addClass('is-active');
+  u(`.btn-page-${selectedPage}`).addClass('is-active');
+  u('.page').addClass('is-hidden'); u(`.page-${selectedPage}`).removeClass('is-hidden');
+  if (tjaParsed && selectedDifficulty !== '') {
+    if (selectedPage === 'editor') {
+      const generatedCanvas = drawChart(tjaParsed, selectedDifficulty);
+      
+      const viewCanvas = document.createElement('canvas');
+      viewCanvas.width = generatedCanvas.width;
+      viewCanvas.height = generatedCanvas.height;
+      viewCanvas.style.width = generatedCanvas.style.width;
+      viewCanvas.style.height = generatedCanvas.style.height;
+      const viewCtx = viewCanvas.getContext('2d');
+      viewCtx.drawImage(generatedCanvas, 0, 0);
+
+      u('.page-editor').empty().append(viewCanvas);
+      u('.page-editor').first().style.width = zoomLevel + '%';
+    } else if (selectedPage === 'preview') {
+      updateJiroPreview(currentElapsedTime);
+    } else if (selectedPage === 'statistics') {
+      const s = getStats(tjaParsed, selectedDifficulty); const dNames = ['かんたん','ふつう','むずかしい','おに','裏おに']; const c = tjaParsed.courses[selectedDifficulty];
+      u('#st-title').text(tjaParsed.headers.title); u('#st-subtitle').text(tjaParsed.headers.subtitle || '');
+      u('#st-diff').text(`${dNames[c.course]} ★${c.headers.level}`);
+      let bStr = s.minBpm === s.maxBpm ? `${formatBpm(s.minBpm)}` : `${formatBpm(s.minBpm)}-${formatBpm(s.maxBpm)} (${formatBpm(s.mainBpm)})`;
+      u('#st-bpm').text(bStr); u('#st-notes').text(s.combo); u('#st-time').text(s.perfTime.toFixed(2)+"s"); u('#st-density').text(s.density.toFixed(3)+" /s");
+      
+      // シンプルな連打情報の構築
+      let rendaHtml = `
+        <div style="margin-bottom: 8px;">
+          <div style="color: #a0a0a0; font-weight: bold; margin-bottom: 2px;">黄色連打</div>
+          <div style="word-break: break-all; color: #e0e0e0;">`;
+      
+      if (s.rendas && s.rendas.length > 0) {
+        rendaHtml += `${s.rendas.map(r => r.toFixed(2) + "s").join(" + ")}<br>`;
+        rendaHtml += `(合計: ${s.rendas.reduce((a,b)=>a+b,0).toFixed(2)}s)`;
+      } else {
+        rendaHtml += `0.00s<br>(合計: 0.00s)`;
+      }
+      
+      rendaHtml += `
+          </div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0; font-weight: bold; margin-bottom: 2px;">風船連打</div>
+          <div style="word-break: break-all; color: #e0e0e0;">`;
+
+      const balloons = c.headers.balloon;
+      if (balloons && balloons.length > 0) {
+        const balloonSum = balloons.reduce((a, b) => a + b, 0);
+        rendaHtml += `${balloons.map(b => b + "打").join(" + ")}<br>`;
+        rendaHtml += `(合計: ${balloonSum}打)`;
+      } else {
+        rendaHtml += `なし<br>(合計: 0打)`;
+      }
+      
+      rendaHtml += `
+          </div>
+        </div>
+      `;
+      
+      u('#st-renda').html(rendaHtml); drawDensityGraph(s.measures);
+    }
+  }
+}
+
+/** エディタ文字色分け用のハイライトヘルパー **/
+let errorLineNumber = null; 
+
+function escapeHtml(string) {
+  return string.replace(/&/g, '&amp;')
+               .replace(/</g, '&lt;')
+               .replace(/>/g, '&gt;')
+               .replace(/"/g, '&quot;')
+               .replace(/'/g, '&#039;');
+}
+
+function highlightTJA(text) {
+  const lines = text.split('\n');
+  let rendaState = 0; // 0:通常, 5:黄連打中(5,6), 7:風船連打中(7)
+
+  const highlightedLines = lines.map((line, lineIndex) => {
+    const isErrorLine = (lineIndex === errorLineNumber - 1);
+    const trimmed = line.trim();
+    
+    let lineHtml = "";
+    if (trimmed.startsWith('//')) {
+      lineHtml = `<span style="color: #888888; font-style: italic;">${escapeHtml(line)}</span>`;
+    } else if (trimmed.startsWith('#')) {
+      lineHtml = `<span style="color: #58a6ff; font-weight: bold;">${escapeHtml(line)}</span>`; 
+    } else if (trimmed.includes(':') && !trimmed.match(/^[0-9]/)) {
+      lineHtml = `<span style="color: #ffffff; font-weight: bold;">${escapeHtml(line)}</span>`; 
+    } else {
+      let result = "";
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const escapedChar = escapeHtml(char);
+        const textShadow = "text-shadow: 0 0 2px rgba(0,0,0,0.8), 0 0 4px rgba(255,255,255,0.05);";
+        
+        if (rendaState === 5) {
+          result += `<span style="color: #ffff00; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          if (char === '8') {
+            rendaState = 0; 
+          }
+        } else if (rendaState === 7) {
+          result += `<span style="color: #ff9100; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          if (char === '8') {
+            rendaState = 0; 
+          }
+        } else {
+          if (char === '5' || char === '6') {
+            rendaState = 5;
+            result += `<span style="color: #ffff00; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          } else if (char === '7') {
+            rendaState = 7;
+            result += `<span style="color: #ff9100; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          } else if (char === '1' || char === '3') {
+            result += `<span style="color: #ff3333; font-weight: bold; ${textShadow}">${escapedChar}</span>`; 
+          } else if (char === '2' || char === '4') {
+            result += `<span style="color: #33ebff; font-weight: bold; ${textShadow}">${escapedChar}</span>`; 
+          } else {
+            result += escapedChar;
+          }
+        }
+      }
+      lineHtml = result;
+    }
+
+    if (isErrorLine) {
+      return `<div class="error-line-highlight" style="background-color: rgba(255, 0, 0, 0.25); display: inline-block; width: 100%;">${lineHtml}</div>`;
+    }
+    return lineHtml;
+  });
+  return highlightedLines.join('\n');
+}
+
+const textarea = u('.input').first();
+const backdrop = u('.backdrop').first();
+const highlightDiv = u('.highlight').first();
+
+function updateLineNumbers(text) {
+  const lineNumbers = u('.line-numbers').first();
+  if (!lineNumbers) return;
+  const linesCount = text.split('\n').length;
+  let html = "";
+  for (let i = 1; i <= linesCount; i++) {
+    const isError = (i === errorLineNumber);
+    const style = isError ? "color: #ff5555; font-weight: bold; background: rgba(255, 0, 0, 0.2);" : "";
+    html += `<span class="ln-${i}" style="${style}">${i}</span>`;
+  }
+  lineNumbers.innerHTML = html;
+  syncScroll();
+}
+
+function syncScroll() {
+  backdrop.scrollTop = textarea.scrollTop;
+  backdrop.scrollLeft = textarea.scrollLeft;
+  const lineNumbers = u('.line-numbers').first();
+  if (lineNumbers) {
+    lineNumbers.scrollTop = textarea.scrollTop;
+  }
+}
+
+textarea.addEventListener('scroll', syncScroll);
+
+let pendingHighlightUpdate = false;
+function updateHighlight() {
+  if (pendingHighlightUpdate) return;
+  pendingHighlightUpdate = true;
+  requestAnimationFrame(() => {
+    const text = textarea.value;
+    highlightDiv.innerHTML = highlightTJA(text) + '\n';
+    updateLineNumbers(text); 
+    syncScroll();
+    pendingHighlightUpdate = false;
+  });
+}
+
+let debounceTimer = null;
+const processFunc = () => {
+  const val = u('.input').first().value; if(!val) return;
+  
+  updateHighlight();
+  
+  if (debounceTimer) clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    try {
+      tjaParsed = parseTJA(val);
+      if (!selectedDifficulty || !tjaParsed.courses[selectedDifficulty]) selectedDifficulty = Object.keys(tjaParsed.courses)[0];
+      
+      // 次郎風プレビュー用の前処理データを作成
+      currentChartData = preparePreviewChart(tjaParsed, selectedDifficulty);
+      if (currentChartData) {
+        setChartTime(currentElapsedTime);
+      }
+
+      updateUI();
+      u('.errors').text('No error');
+      
+      if (errorLineNumber !== null) {
+        errorLineNumber = null;
+        updateHighlight();
+      }
+      
+      localStorage.setItem('tja_tools_autosave', val);
+    } catch(e) { 
+      u('.errors').text(e.message);
+      
+      const match = e.message.match(/(?:行|line)\s*([0-9]+)/i);
+      if (match) {
+        errorLineNumber = parseInt(match[1], 10);
+      } else {
+        errorLineNumber = null;
+      }
+      updateHighlight(); 
+    }
+  }, 150);
+};
+
+u('.input').on('input', processFunc);
+u('#btn-open').on('click', () => u('#file-input').first().click());
+
+// インポート拡張: ZIP, MCZ音源自動読み込みと単品音源読み込み
+u('#file-input').on('change', async (e) => {
+    const f = e.target.files[0]; if(!f) return;
+    const ext = f.name.split('.').pop().toLowerCase();
+    const allowed = ["tja", "mc", "txt", "zip", "mcz", "mp3", "m4a", "wav", "ogg"];
+    if (!allowed.includes(ext)) { u('.errors').text("エラー: 対応していない形式です (.tja, .mc, .zip 等のみ)"); return; }
+    try {
+        let content = ""; const ab = await f.arrayBuffer();
+        if (f.name.toLowerCase().match(/\.(zip|mcz)$/)) {
+            const zip = await JSZip.loadAsync(ab);
+            const tjaF = Object.values(zip.files).find(file => file.name.toLowerCase().endsWith('.tja') || file.name.toLowerCase().endsWith('.mc'));
+            if (!tjaF) throw new Error("譜面が見つかりません");
+            const buf = await tjaF.async("arraybuffer");
+            content = tjaF.name.endsWith('.mc') ? convertMCtoTJA(await loadFileWithEncoding(buf)) : await loadFileWithEncoding(buf);
+
+            // TJAを一時解析してWAVE指定を取得
+            const tempParsed = parseTJA(content);
+            const waveName = tempParsed.headers.wave ? tempParsed.headers.wave.toLowerCase() : "";
+            
+            let audioFileInZip = null;
+            if (waveName) {
+                audioFileInZip = Object.values(zip.files).find(file => {
+                    const fname = file.name.split('/').pop().toLowerCase();
+                    return fname === waveName;
+                });
+            }
+            if (!audioFileInZip) {
+                const audioExts = [".mp3", ".m4a", ".wav", ".ogg"];
+                audioFileInZip = Object.values(zip.files).find(file => {
+                    const nameLower = file.name.toLowerCase();
+                    return audioExts.some(ext => nameLower.endsWith(ext));
+                });
+            }
+            
+            if (audioFileInZip) {
+                initializeAudio();
+                const audioData = await audioFileInZip.async("arraybuffer");
+                try {
+                    musicAudioBuffer = await audioContext.decodeAudioData(audioData);
+                    uploadedMusicFileName = audioFileInZip.name.split('/').pop();
+                    if (uploadedMusicObjectURL) URL.revokeObjectURL(uploadedMusicObjectURL);
+                    uploadedMusicObjectURL = URL.createObjectURL(new Blob([audioData]));
+                    u('#music-filename-display').text(`音源: ${uploadedMusicFileName}`);
+                } catch (decErr) {
+                    console.error("音源デコードエラー:", decErr);
+                    u('.errors').text("音源ファイルのデコードに失敗しました: " + decErr.message);
+                }
+            } else {
+                u('#music-filename-display').text("音源: 未ロード");
+            }
+        } else if (f.name.toLowerCase().match(/\.(mp3|m4a|wav|ogg)$/)) {
+            initializeAudio();
+            try {
+                musicAudioBuffer = await audioContext.decodeAudioData(ab.slice(0));
+                uploadedMusicFileName = f.name;
+                if (uploadedMusicObjectURL) URL.revokeObjectURL(uploadedMusicObjectURL);
+                uploadedMusicObjectURL = URL.createObjectURL(f);
+                u('#music-filename-display').text(`音源: ${uploadedMusicFileName}`);
+            } catch (decErr) {
+                console.error("音源デコードエラー:", decErr);
+                u('.errors').text("音源ファイルのデコードに失敗しました: " + decErr.message);
+            }
+            e.target.value = null;
+            return;
+        } else { 
+            content = f.name.endsWith('.mc') ? convertMCtoTJA(await loadFileWithEncoding(ab)) : await loadFileWithEncoding(ab); 
+        }
+        u('.input').first().value = content; processFunc();
+    } catch(err) { u('.errors').text(err.message); }
+    e.target.value = null;
+});
+
+u('#zoom-in').on('click', (e) => { e.preventDefault(); zoomLevel += 20; updateUI(); });
+u('#zoom-out').on('click', (e) => { e.preventDefault(); zoomLevel = Math.max(100, zoomLevel - 20); updateUI(); });
+u('#btn-save').on('click', () => {
+  const cv = u('canvas').first(); if (!cv) return;
+  const link = document.createElement('a'); link.download = (tjaParsed.headers.title || 'chart') + '.png'; link.href = cv.toDataURL(); link.click();
+});
+u('#btn-tja-save').on('click', () => {
+  if (!tjaParsed) return;
+  const codes = Encoding.convert(Encoding.stringToCode(u('.input').first().value), 'SJIS', 'UNICODE');
+  const blob = new Blob([new Uint8Array(codes)], { type: 'application/octet-stream' });
+  const name = (tjaParsed.headers.wave || "chart.tja").split('.')[0] + ".tja";
+  const link = document.createElement('a'); link.download = name; link.href = URL.createObjectURL(blob); link.click();
+});
+u('#btn-grad-replace').on('click', () => { replaceGradation(); processFunc(); });
+u('.controls-diff .button[data-value]').on('click', e => { 
+  selectedDifficulty = u(e.target).data('value'); 
+  currentChartData = preparePreviewChart(tjaParsed, selectedDifficulty);
+  if (currentChartData) setChartTime(0);
+  updateUI(); 
+});
+u('.controls-page .button[data-value]').on('click', e => { selectedPage = u(e.target).data('value'); updateUI(); });
+
+// 次郎風プレビュー用データ前処理
+function preparePreviewChart(parsedTJA, courseId) {
+    const course = parsedTJA.courses[courseId];
+    if (!course) return null;
+    
+    const chart = {
+        notes: [],
+        commands: [],
+        maxCombo: 0,
+        endTime: 0,
+        barlineTimes: [0.0],
+        allMeasureTimes: [0.0],
+        balloonList: course.headers.balloon || [],
+        balloonIndex: 0,
+        courseName: courseId
+    };
+    
+    let currentBPM = parsedTJA.headers.bpm || 120;
+    let currentTime = 1.0; 
+    const offset = parsedTJA.headers.offset || 0;
+    if (offset < 0) {
+        currentTime -= offset; 
+    }
+    
+    let currentMeasureRatio = 1.0;
+    let currentRoll = null;
+    let isGogo = false;
+    let currentScroll = 1.0;
+    let currentScrollY = 0.0;
+    let currentBarline = true;
+    let barlineNeeded = true;
+    
+    chart.commands.push({ time: -Infinity, type: 'BPMCHANGE', value: currentBPM });
+    chart.commands.push({ time: -Infinity, type: 'SCROLL', value: 1.0, valueY: 0.0 });
+    chart.commands.push({ time: -Infinity, type: 'BARLINEON' });
+    
+    course.measures.forEach((m) => {
+        if (barlineNeeded && currentBarline) {
+            chart.notes.push({
+                time: currentTime,
+                type: 'BARLINE',
+                hitProcessed: true,
+                judgeResult: 'pending',
+                bpm: currentBPM,
+                scroll: currentScroll,
+                scrollY: currentScrollY,
+                barlineVisible: currentBarline
+            });
+            chart.barlineTimes.push(currentTime);
+        }
+        if (barlineNeeded) {
+            chart.allMeasureTimes.push(currentTime);
+        }
+        barlineNeeded = false;
+        
+        let noteChars = m.data;
+        if (noteChars.length === 0 && m.events.length === 0) {
+            noteChars = "0";
+        }
+        
+        const noteCountInMeasure = noteChars.length;
+        const measureDurationInBeats = 4.0 * (m.length[0] / m.length[1]);
+        const beatsPerNote = (noteCountInMeasure > 0) ? (measureDurationInBeats / noteCountInMeasure) : 0;
+        
+        const eventsByPos = {};
+        m.events.forEach(e => {
+            if (!eventsByPos[e.pos]) eventsByPos[e.pos] = [];
+            eventsByPos[e.pos].push(e);
+        });
+        
+        for (let j = 0; j < noteChars.length; j++) {
+            if (eventsByPos[j]) {
+                eventsByPos[j].forEach(e => {
+                    const nameUpper = e.name.toUpperCase();
+                    if (nameUpper === 'BPMCHANGE') {
+                        const bpmValue = parseFloat(e.value);
+                        if (!isNaN(bpmValue)) {
+                            currentBPM = bpmValue;
+                            chart.commands.push({ time: currentTime, type: 'BPMCHANGE', value: bpmValue });
+                        }
+                    } else if (nameUpper === 'DELAY') {
+                        const delayValue = parseFloat(e.value);
+                        if (!isNaN(delayValue)) {
+                            chart.commands.push({ time: currentTime, type: 'DELAY', value: delayValue });
+                            currentTime += delayValue;
+                        }
+                    } else if (nameUpper === 'MEASURE') {
+                        const parts = e.value.split('/');
+                        if (parts.length === 2) {
+                            const num = parseFloat(parts[0]), den = parseFloat(parts[1]);
+                            if (!isNaN(num) && !isNaN(den) && den > 0) {
+                                currentMeasureRatio = num / den;
+                                chart.commands.push({ time: currentTime, type: 'MEASURE', value: e.value, ratio: currentMeasureRatio });
+                            }
+                        }
+                    } else if (nameUpper === 'GOGOSTART') {
+                        isGogo = true;
+                        chart.commands.push({ time: currentTime, type: 'GOGOSTART' });
+                    } else if (nameUpper === 'GOGOEND') {
+                        isGogo = false;
+                        chart.commands.push({ time: currentTime, type: 'GOGOEND' });
+                    } else if (nameUpper === 'SCROLL') {
+                        const sVal = parseFloat(e.value);
+                        if (!isNaN(sVal)) {
+                            currentScroll = sVal;
+                            currentScrollY = 0.0;
+                            chart.commands.push({ time: currentTime, type: 'SCROLL', value: currentScroll, valueY: 0.0 });
+                        }
+                    } else if (nameUpper === 'BARLINEON') {
+                        currentBarline = true;
+                        chart.commands.push({ time: currentTime, type: 'BARLINEON' });
+                    } else if (nameUpper === 'BARLINEOFF') {
+                        currentBarline = false;
+                        chart.commands.push({ time: currentTime, type: 'BARLINEOFF' });
+                    }
+                });
+            }
+            
+            const char = noteChars[j];
+            const charTime = currentTime;
+            const secondsPerThisNote = beatsPerNote * (60.0 / currentBPM);
+            currentTime += secondsPerThisNote;
+            
+            const noteState = { bpm: currentBPM, scroll: currentScroll, scrollY: currentScrollY };
+            
+            switch (char) {
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                    chart.notes.push({
+                        time: charTime,
+                        endTime: currentTime,
+                        type: char,
+                        hits: 0,
+                        hitProcessed: false,
+                        judgeResult: 'pending',
+                        ...noteState
+                    });
+                    chart.maxCombo++;
+                    chart.endTime = Math.max(chart.endTime, currentTime);
+                    break;
+                case '5':
+                case '6':
+                case '7':
+                    if (currentRoll) {
+                        currentRoll.endTime = charTime;
+                        chart.notes.push(currentRoll);
+                        chart.endTime = Math.max(chart.endTime, currentRoll.endTime);
+                        currentRoll = null;
+                    }
+                    let hits = 0;
+                    if (char === '7') {
+                        const balloons = course.headers.balloon || [];
+                        if (balloons.length > 0) {
+                            hits = balloons[Math.min(chart.ballonIndex, balloons.length - 1)] || 0;
+                        }
+                        chart.ballonIndex++;
+                    }
+                    currentRoll = {
+                        time: charTime,
+                        endTime: currentTime,
+                        type: char,
+                        hits: hits,
+                        currentHits: 0,
+                        hitProcessed: false,
+                        lastAutoHitTime: 0,
+                        judgeResult: 'pending',
+                        ...noteState
+                    };
+                    break;
+                case '8':
+                    if (currentRoll) {
+                        currentRoll.endTime = charTime;
+                        chart.notes.push(currentRoll);
+                        chart.endTime = Math.max(chart.endTime, currentRoll.endTime);
+                        currentRoll = null;
+                    }
+                    break;
+            }
+        }
+        
+        if (eventsByPos[noteChars.length]) {
+            eventsByPos[noteChars.length].forEach(e => {
+                const nameUpper = e.name.toUpperCase();
+                if (nameUpper === 'BPMCHANGE') {
+                    const bpmValue = parseFloat(e.value);
+                    if (!isNaN(bpmValue)) {
+                        currentBPM = bpmValue;
+                        chart.commands.push({ time: currentTime, type: 'BPMCHANGE', value: bpmValue });
+                    }
+                } else if (nameUpper === 'MEASURE') {
+                    const parts = e.value.split('/');
+                    if (parts.length === 2) {
+                        const num = parseFloat(parts[0]), den = parseFloat(parts[1]);
+                        if (!isNaN(num) && !isNaN(den) && den > 0) {
+                            currentMeasureRatio = num / den;
+                            chart.commands.push({ time: currentTime, type: 'MEASURE', value: e.value, ratio: currentMeasureRatio });
+                        }
+                    }
+                } else if (nameUpper === 'GOGOSTART') {
+                    isGogo = true;
+                    chart.commands.push({ time: currentTime, type: 'GOGOSTART' });
+                } else if (nameUpper === 'GOGOEND') {
+                    isGogo = false;
+                    chart.commands.push({ time: currentTime, type: 'GOGOEND' });
+                } else if (nameUpper === 'SCROLL') {
+                    const sVal = parseFloat(e.value);
+                    if (!isNaN(sVal)) {
+                        currentScroll = sVal;
+                        currentScrollY = 0.0;
+                        chart.commands.push({ time: currentTime, type: 'SCROLL', value: currentScroll, valueY: 0.0 });
+                    }
+                } else if (nameUpper === 'BARLINEON') {
+                    currentBarline = true;
+                    chart.commands.push({ time: currentTime, type: 'BARLINEON' });
+                } else if (nameUpper === 'BARLINEOFF') {
+                    currentBarline = false;
+                    chart.commands.push({ time: currentTime, type: 'BARLINEOFF' });
+                }
+            });
+        }
+        
+        barlineNeeded = true;
+    });
+    
+    if (currentRoll) {
+        currentRoll.endTime = currentTime;
+        chart.notes.push(currentRoll);
+        chart.endTime = Math.max(chart.endTime, currentRoll.endTime);
+        currentRoll = null;
+    }
+    
+    chart.notes.sort((a, b) => a.time - b.time);
+    if (chart.barlineTimes.length > 0) {
+        const lastBarlineTime = chart.barlineTimes.pop();
+        if (chart.notes.length > 0 && chart.notes[chart.notes.length - 1].type === 'BARLINE' && chart.notes[chart.notes.length - 1].time === lastBarlineTime) {
+            chart.notes.pop();
+        }
+    }
+    if (chart.allMeasureTimes.length > 0) {
+        chart.allMeasureTimes.pop();
+    }
+    chart.commands.sort((a, b) => a.time - b.time);
+    chart.endTime = (chart.notes.length > 0) ? chart.notes.reduce((max, note) => Math.max(max, note.endTime || note.time), 0) : 0;
+    
+    return chart;
+}
+
+// 合成ビープ音による効果音生成（フォールバック用）
+function createSynthesizedAudioBuffer(ctx, type) {
+    const rate = ctx.sampleRate || 44100;
+    const duration = 0.12;
+    const length = rate * duration;
+    const buffer = ctx.createBuffer(1, length, rate);
+    const data = buffer.getChannelData(0);
+    if (type === 'don') {
+        for (let i = 0; i < length; i++) {
+            const t = i / rate;
+            data[i] = Math.sin(2 * Math.PI * 140 * Math.exp(-35 * t)) * Math.exp(-12 * t);
+        }
+    } else if (type === 'ka') {
+        for (let i = 0; i < length; i++) {
+            const t = i / rate;
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-45 * t) * 0.4 + Math.sin(2 * Math.PI * 380 * Math.exp(-25 * t)) * Math.exp(-18 * t) * 0.25;
+        }
+    } else { // balloon
+        for (let i = 0; i < length; i++) {
+            const t = i / rate;
+            data[i] = Math.sin(2 * Math.PI * 750 * Math.exp(-12 * t)) * Math.exp(-8 * t) * 0.45;
+        }
+    }
+    return buffer;
+}
+
+async function loadAudioBuffer(url, key) {
+    if (!audioContext) return;
+    try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        audioBuffers[key] = await audioContext.decodeAudioData(arrayBuffer);
+    } catch (e) { 
+        console.warn(`Failed to load online audio, using synthesis fallback instead.`, e); 
+    }
+}
+
+function initializeAudio() {
+    if (!audioContext) {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            seGainNode = audioContext.createGain();
+            seGainNode.gain.value = seVolume;
+            seGainNode.connect(audioContext.destination);
+            
+            musicGainNode = audioContext.createGain();
+            musicGainNode.gain.value = musicVolume;
+            musicGainNode.connect(audioContext.destination);
+
+            // 合成音で初期化
+            audioBuffers['don'] = createSynthesizedAudioBuffer(audioContext, 'don');
+            audioBuffers['ka'] = createSynthesizedAudioBuffer(audioContext, 'ka');
+            audioBuffers['balloon'] = createSynthesizedAudioBuffer(audioContext, 'balloon');
+            
+        } catch (e) { 
+            console.error("Web Audio API is not supported in this browser"); 
+            return; 
+        }
+    } else {
+        if (seGainNode) seGainNode.gain.value = seVolume;
+        if (musicGainNode) musicGainNode.gain.value = musicVolume;
+    }
+    
+    ['don', 'ka', 'balloon'].forEach(key => {
+        const base64 = localStorage.getItem(`se_${key}`);
+        if (base64) {
+            loadAudioBuffer(base64, key);
+        } else {
+            loadAudioBuffer(`${key}.ogg`, key);
+        }
+    });
+}
+
+function updateChartState(timeSec) {
+    if (!currentChartData) {
+        HIT_POSITION_X = HIT_POSITION_X_DEFAULT;
+        u('#jiro-preview-container').removeClass('gogo-time-bg');
+        return;
+    }
+    while (state_commandIndex < currentChartData.commands.length) {
+        const cmd = currentChartData.commands[state_commandIndex];
+        if (cmd.time > timeSec) {
+            break;
+        }
+        switch (cmd.type) {
+            case 'BPMCHANGE':
+                state_currentBPM = cmd.value;
+                break;
+            case 'GOGOSTART':
+                state_isGogo = true;
+                break;
+            case 'GOGOEND':
+                state_isGogo = false;
+                break;
+        }
+        state_commandIndex++;
+    }
+    HIT_POSITION_X = HIT_POSITION_X_DEFAULT;
+    u('#jiro-preview-container').toggleClass('gogo-time-bg', state_isGogo);
+}
+
+function seekChartState(timeSec) {
+    state_commandIndex = 0;
+    state_currentBPM = tjaParsed ? (tjaParsed.headers.bpm || 120) : 120;
+    state_isGogo = false;
+    if (!currentChartData) {
+        updateChartState(0);
+        return;
+    }
+    while (state_commandIndex < currentChartData.commands.length) {
+        const cmd = currentChartData.commands[state_commandIndex];
+        if (cmd.time > timeSec) {
+            break;
+        }
+        switch (cmd.type) {
+            case 'BPMCHANGE':
+                state_currentBPM = cmd.value;
+                break;
+            case 'GOGOSTART':
+                state_isGogo = true;
+                break;
+            case 'GOGOEND':
+                state_isGogo = false;
+                break;
+        }
+        state_commandIndex++;
+    }
+    updateChartState(timeSec);
+}
+
+function drawJiroNoteStroke(noteType, x, y, ctx) {
+    let whiteWidth, blackWidth;
+    if (noteType === '3' || noteType === '4' || noteType === '6' || noteType === '7') {
+        whiteWidth = 6; blackWidth = 1.5;
+    } else {
+        whiteWidth = 4; blackWidth = 1;
+    }
+    const size = NOTE_SIZE[noteType] || 15;
+    ctx.lineWidth = whiteWidth;
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, size + (whiteWidth / 2) + (blackWidth / 2), 0, Math.PI * 2);
+    ctx.lineWidth = blackWidth;
+    ctx.strokeStyle = '#000000';
+    ctx.stroke();
+}
+
+const jiroCanvas = document.getElementById('jiro-previewCanvas');
+const jiroCtx = jiroCanvas.getContext('2d');
+
+function updateJiroPreview(time = currentElapsedTime) {
+    if (!currentChartData) {
+        jiroCtx.clearRect(0, 0, jiroCanvas.width, jiroCanvas.height);
+        seekChartState(0);
+        return;
+    }
+    
+    jiroCanvas.width = jiroCanvas.clientWidth;
+    jiroCanvas.height = jiroCanvas.clientHeight;
+    
+    seekChartState(time);
+    const elapsedTime = time, baseCenterY = jiroCanvas.height / 2;
+    const canvasMargin = 100;
+    jiroCtx.clearRect(0, 0, jiroCanvas.width, jiroCanvas.height);
+    
+    let notesWithState = currentChartData.notes.map((note, index) => ({ note, index }));
+    notesWithState.sort((a, b) => {
+        const isABarline = a.note.type === 'BARLINE', isBBarline = b.note.type === 'BARLINE';
+        if (isABarline && !isBBarline) return -1;
+        if (!isABarline && isBBarline) return 1;
+        if (isABarline && isBBarline) return b.note.time - a.note.time;
+        if (a.note.time !== b.note.time) return b.note.time - a.note.time;
+        return b.index - a.index;
+    });
+
+    for (const { note } of notesWithState) {
+        if (chartCoolDownUntil !== null && note.time < chartCoolDownUntil && note.type !== 'BARLINE') {
+            if (note.type >= '5' && note.type <= '7' && note.endTime > currentElapsedTime) { }
+            else { continue; }
+        }
+        const { bpm, scroll, scrollY } = note;
+        const pixelsPerSecondX = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
+        const pixelsPerSecondY = BASE_SCROLL_FACTOR * bpm * scrollY * scrollMultiplier;
+        const timeDiff = note.time - elapsedTime;
+        const x = HIT_POSITION_X + timeDiff * pixelsPerSecondX;
+        const y = baseCenterY + timeDiff * pixelsPerSecondY;
+
+        if (note.type === 'BARLINE') {
+            if (!note.barlineVisible || (x < -canvasMargin || x > jiroCanvas.width + canvasMargin || y < -canvasMargin || y > jiroCanvas.height + canvasMargin) || (pixelsPerSecondX === 0 && pixelsPerSecondY === 0)) continue;
+            const angle = Math.atan2(pixelsPerSecondY, pixelsPerSecondX), normalAngle = angle + Math.PI / 2;
+            const dx = Math.cos(normalAngle), dy = Math.sin(normalAngle);
+            const lineHalfLength = jiroCanvas.height / 2, scaledDx = dx * lineHalfLength, scaledDy = dy * lineHalfLength;
+            jiroCtx.beginPath();
+            jiroCtx.moveTo(x - scaledDx, y - scaledDy);
+            jiroCtx.lineTo(x + scaledDx, y + scaledDy);
+            jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            jiroCtx.lineWidth = 2;
+            jiroCtx.stroke();
+        } else if (note.type >= '1' && note.type <= '4') {
+            if (note.judgeResult === 'hit' || (x < -canvasMargin || x > jiroCanvas.width + canvasMargin || y < -canvasMargin || y > jiroCanvas.height + canvasMargin)) continue;
+            const size = NOTE_SIZE[note.type], color = NOTE_COLORS[note.type];
+            jiroCtx.beginPath();
+            jiroCtx.arc(x, y, size, 0, Math.PI * 2);
+            jiroCtx.fillStyle = color;
+            jiroCtx.fill();
+            drawJiroNoteStroke(note.type, x, y, jiroCtx);
+        } else if (note.type === '5' || note.type === '6') {
+            const pixelsPerSecondX_End = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier, pixelsPerSecondY_End = BASE_SCROLL_FACTOR * bpm * scrollY * scrollMultiplier;
+            const endTimeDiff = note.endTime - elapsedTime;
+            const endX = HIT_POSITION_X + endTimeDiff * pixelsPerSecondX_End, endY = baseCenterY + endTimeDiff * pixelsPerSecondY_End;
+            if ((x < -canvasMargin && endX < -canvasMargin) || (x > jiroCanvas.width + canvasMargin && endX > jiroCanvas.width + canvasMargin) || (y < -canvasMargin && endY < -canvasMargin) || (y > jiroCanvas.height + canvasMargin && endY > jiroCanvas.height + canvasMargin)) continue;
+            const size = NOTE_SIZE[note.type], color = NOTE_COLORS[note.type];
+            jiroCtx.beginPath();
+            jiroCtx.moveTo(x, y);
+            jiroCtx.lineTo(endX, endY);
+            jiroCtx.strokeStyle = color;
+            jiroCtx.lineWidth = size * 2;
+            jiroCtx.stroke();
+            jiroCtx.beginPath();
+            jiroCtx.arc(endX, endY, size, 0, Math.PI * 2);
+            jiroCtx.fillStyle = color;
+            jiroCtx.fill();
+            jiroCtx.beginPath();
+            jiroCtx.arc(x, y, size, 0, Math.PI * 2);
+            jiroCtx.fillStyle = color;
+            jiroCtx.fill();
+            drawJiroNoteStroke(note.type, x, y, jiroCtx);
+        } else if (note.type === '7') {
+            if (note.judgeResult === 'hit' || note.judgeResult === 'miss') continue;
+            const pixelsPerSecondX_End = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier, pixelsPerSecondY_End = BASE_SCROLL_FACTOR * bpm * scrollY * scrollMultiplier;
+            const endTimeDiff = note.endTime - elapsedTime;
+            const endX = HIT_POSITION_X + endTimeDiff * pixelsPerSecondX_End, endY = baseCenterY + endTimeDiff * pixelsPerSecondY_End;
+            let displayX = x, displayY = y, stayAtHitPos = false;
+            if (note.judgeResult === 'pending') {
+                if (elapsedTime <= note.endTime) {
+                    if (pixelsPerSecondX > 0) {
+                        if (x <= HIT_POSITION_X && endX > HIT_POSITION_X) stayAtHitPos = true;
+                    } else if (pixelsPerSecondX < 0) {
+                        if (x >= HIT_POSITION_X && endX < HIT_POSITION_X) stayAtHitPos = true;
+                    } else if (pixelsPerSecondY !== 0) {
+                        if (pixelsPerSecondY > 0) {
+                            if (y >= baseCenterY && endY > baseCenterY) stayAtHitPos = true;
+                        } else {
+                            if (y <= baseCenterY && endY < baseCenterY) stayAtHitPos = true;
+                        }
+                    }
+                    if (stayAtHitPos) {
+                        displayX = HIT_POSITION_X;
+                        if (pixelsPerSecondX !== 0) {
+                            const timeToHitX = (HIT_POSITION_X - x) / pixelsPerSecondX, displayTime = note.time + timeToHitX;
+                            const displayTimeDiff = displayTime - elapsedTime;
+                            const stopPixelsPerSecondY = BASE_SCROLL_FACTOR * note.bpm * note.scrollY * scrollMultiplier;
+                            displayY = baseCenterY + displayTimeDiff * stopPixelsPerSecondY;
+                        } else {
+                            displayY = baseCenterY;
+                        }
+                    }
+                } else {
+                    displayX = endX;
+                    displayY = endY;
+                }
+            }
+            if (displayX > jiroCanvas.width + canvasMargin || displayX < -canvasMargin || displayY > jiroCanvas.height + canvasMargin || displayY < -canvasMargin) continue;
+            const size = NOTE_SIZE[note.type], color = NOTE_COLORS[note.type];
+            jiroCtx.beginPath();
+            jiroCtx.arc(displayX, displayY, size, 0, Math.PI * 2);
+            jiroCtx.fillStyle = color;
+            jiroCtx.fill();
+            drawJiroNoteStroke(note.type, displayX, displayY, jiroCtx);
+            const remainingHits = note.hits - note.currentHits;
+            jiroCtx.fillStyle = 'white';
+            jiroCtx.font = 'bold 18px Inter';
+            jiroCtx.textAlign = 'center';
+            jiroCtx.textBaseline = 'middle';
+            if (note.hits > 0 && note.judgeResult === 'pending') jiroCtx.fillText(remainingHits.toString(), displayX, displayY);
+        }
+    }
+}
+
+function setChartTime(time) {
+    if (!currentChartData) {
+        currentElapsedTime = 0;
+        currentMeasureIndex = 0;
+        currentCombo = 0;
+        updateComboDisplay();
+        updateMeasureDisplay();
+        seekChartState(0);
+        updateJiroPreview(0);
+        return;
+    }
+    const wasPlaying = isPlaying;
+    if (wasPlaying) stopSimulation();
+    currentElapsedTime = time;
+    currentMeasureIndex = findMeasureIndex(time);
+    let initialCombo = 0;
+    currentChartData.notes.forEach(note => {
+        if (note.time < time) {
+            if ((note.type >= '5' && note.type <= '7') && note.endTime > time) {
+                note.judgeResult = 'pending';
+                note.currentHits = 0;
+                note.lastAutoHitTime = 0;
+            } else {
+                note.judgeResult = 'hit';
+                if (note.type === '1' || note.type === '2' || note.type === '3' || note.type === '4') initialCombo++;
+                if (note.type === '7' && note.hits > 0) note.currentHits = note.hits;
+                if (note.type === '5' || note.type === '6') {
+                    const duration = note.endTime - note.time;
+                    note.currentHits = Math.floor(duration / (1.0 / autoRollSpeed));
+                }
+            }
+        } else {
+            note.judgeResult = 'pending';
+            note.currentHits = 0;
+            note.lastAutoHitTime = 0;
+        }
+    });
+    currentCombo = initialCombo;
+    updateComboDisplay();
+    updateMeasureDisplay();
+    seekChartState(currentElapsedTime);
+    updateJiroPreview(currentElapsedTime);
+    
+    if (wasPlaying) {
+        const targetTime = currentElapsedTime;
+        if (targetTime === 0) {
+            chartCoolDownUntil = coolDownTime;
+            currentElapsedTime = 0;
+        } else {
+            currentElapsedTime = Math.max(0, targetTime - coolDownTime);
+            chartCoolDownUntil = targetTime;
+        }
+        seekChartState(currentElapsedTime);
+        stopAtTime = null;
+        startSimulation();
+    }
+}
+
+async function startSimulation() {
+    if (isPlaying || !currentChartData) return;
+    initializeAudio();
+    if (audioContext && audioContext.state === 'suspended') {
+        await audioContext.resume();
+    }
+
+    isPlaying = true;
+    
+    const requiredWaveName = tjaParsed.headers.wave;
+    const isFileNameMatch = (requiredWaveName && uploadedMusicFileName && requiredWaveName.toLowerCase() === uploadedMusicFileName.toLowerCase());
+    
+    simulationStartOffset = currentElapsedTime;
+    simulationStartTime = audioContext.currentTime;
+
+    if (musicAudioBuffer && isFileNameMatch) {
+        musicSourceNode = audioContext.createBufferSource();
+        musicSourceNode.buffer = musicAudioBuffer;
+        musicSourceNode.playbackRate.value = playbackSpeed;
+        musicSourceNode.connect(musicGainNode);
+
+        const offset = tjaParsed.headers.offset || 0;
+        const targetTime = coolDownTime + Math.max(0, offset);
+
+        if (simulationStartOffset < targetTime) {
+            let waitTime = targetTime - simulationStartOffset;
+            musicSourceNode.start(audioContext.currentTime + waitTime, 0);
+        } else {
+            let playedRealTime = simulationStartOffset - targetTime;
+            let musicOffset = playedRealTime * playbackSpeed;
+            musicSourceNode.start(audioContext.currentTime, musicOffset);
+        }
+    }
+
+    u('#jiro-btn-play').text('一時停止');
+    lastAutoEffectTime = 0;
+    lastFrameTime = performance.now();
+    
+    logicIntervalId = setInterval(updateLogic, 1000 / 240);
+    animationFrameId = requestAnimationFrame(drawLoop);
+}
+
+function stopSimulation() {
+    if (!isPlaying) return;
+    isPlaying = false;
+    
+    if (musicSourceNode) {
+        try { musicSourceNode.stop(); } catch(e) {}
+        musicSourceNode.disconnect();
+        musicSourceNode = null;
+    }
+    
+    stopAtTime = null;
+    chartCoolDownUntil = null;
+    if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
+    if (logicIntervalId) { clearInterval(logicIntervalId); logicIntervalId = null; }
+    u('#jiro-btn-play').text('再生');
+    u('#jiro-judge-display').html('');
+    u('#jiro-roll-display').html('');
+    updateJiroPreview(currentElapsedTime);
+}
+
+function togglePlay() {
+    if (isPlaying) {
+        stopSimulation();
+    } else {
+        startSimulation();
+    }
+}
+
+function resetSimulation() {
+    stopSimulation();
+    setChartTime(0);
+}
+
+function findMeasureIndex(time) {
+    if (!currentChartData) return 0;
+    let index = 0;
+    for (let i = 0; i < currentChartData.allMeasureTimes.length; i++) {
+        if (currentChartData.allMeasureTimes[i] <= time) index = i;
+        else break;
+    }
+    return index;
+}
+
+function seekToMeasure(direction) {
+    if (isPlaying || !currentChartData) return;
+    const newMeasureIndex = Math.max(0, Math.min(currentChartData.allMeasureTimes.length - 1, currentMeasureIndex + direction));
+    setChartTime(currentChartData.allMeasureTimes[newMeasureIndex]);
+}
+
+function playSE(type) {
+    if (performance.now() - lastSEPlayTime[type] < 1000 / renderFPS) return;
+    if (!audioContext || !audioBuffers[type] || !seGainNode) return;
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[type];
+    source.connect(seGainNode);
+    source.start(0);
+    lastSEPlayTime[type] = performance.now();
+}
+
+function showHitEffect(type) {
+    let element, timeoutKey;
+    switch (type) {
+        case 'don-left': element = u('#jiro-don-effect-l').first(); timeoutKey = 'donLeft'; break;
+        case 'don-right': element = u('#jiro-don-effect-r').first(); timeoutKey = 'donRight'; break;
+        case 'ka-left': element = u('#jiro-ka-effect-l').first(); timeoutKey = 'kaLeft'; break;
+        case 'ka-right': element = u('#jiro-ka-effect-r').first(); timeoutKey = 'kaRight'; break;
+        default: return;
+    }
+    if (!element) return;
+    if (hitEffectTimeout[timeoutKey]) clearTimeout(hitEffectTimeout[timeoutKey]);
+    element.classList.remove('effect-fade');
+    void element.offsetWidth;
+    element.classList.add('effect-fade');
+    hitEffectTimeout[timeoutKey] = setTimeout(() => {
+        element.classList.remove('effect-fade');
+        hitEffectTimeout[timeoutKey] = null;
+    }, 200);
+}
+
+function showJudge(text, color) {
+    const display = u('#jiro-judge-display').first();
+    if (!display) return;
+    const item = document.createElement('div');
+    item.className = 'judge-item';
+    item.textContent = text;
+    item.style.color = color;
+    display.appendChild(item);
+    setTimeout(() => {
+        if (item.parentElement) display.removeChild(item);
+    }, 300);
+}
+
+function updateComboDisplay() {
+    const el = u('#jiro-combo-display').first();
+    if (!el) return;
+    if (currentCombo < 10) {
+        el.style.opacity = 0;
+    } else {
+        el.textContent = currentCombo;
+        el.style.opacity = 1;
+        if (currentCombo >= 100) el.style.color = '#FFD700';
+        else if (currentCombo >= 50) el.style.color = '#C0C0C0';
+        else el.style.color = '#FFFFFF';
+    }
+}
+
+function updateMeasureDisplay() {
+    if (!currentChartData || !currentChartData.allMeasureTimes) {
+        u('#jiro-measure-display').text('');
+        return;
+    }
+    const currentMeasure = currentMeasureIndex;
+    const totalMeasures = currentChartData.allMeasureTimes.length - 1;
+    u('#jiro-measure-display').text(`${currentMeasure} / ${totalMeasures}`);
+}
+
+function autoHitCheck(elapsedTime) {
+    if (!currentChartData) return;
+    for (const note of currentChartData.notes) {
+        if (note.judgeResult !== 'pending') continue;
+        if (note.type === '7' && note.hits === 0 && elapsedTime >= note.time) {
+            note.judgeResult = 'hit';
+            continue;
+        }
+        if (note.type >= '5' && note.type <= '7') {
+            if (elapsedTime >= note.time && elapsedTime <= note.endTime) {
+                if (note.lastAutoHitTime === 0) note.lastAutoHitTime = note.time;
+                const hitInterval = 1.0 / autoRollSpeed;
+                const timeSinceLastHit = elapsedTime - note.lastAutoHitTime;
+                if (timeSinceLastHit >= hitInterval) {
+                    const hits = Math.floor(timeSinceLastHit / hitInterval);
+                    note.lastAutoHitTime += (hitInterval * hits);
+                    note.currentHits += hits;
+                    const timeSinceLastEffect = elapsedTime - lastAutoEffectTime;
+                    const skipEffect = timeSinceLastEffect < (1.0 / 60.0);
+                    if (!skipEffect) lastAutoEffectTime = elapsedTime;
+                    let noteHitType = 'don';
+                    playSE(noteHitType);
+                    if (note.currentHits % 2 === 1) {
+                        if (!skipEffect) showHitEffect(noteHitType + '-left');
+                    } else {
+                        if (!skipEffect) showHitEffect(noteHitType + '-right');
+                    }
+                    if (note.type === '7' && note.hits > 0 && note.currentHits >= note.hits) {
+                        note.judgeResult = 'hit';
+                        playSE('balloon');
+                    }
+                }
+            } else if (elapsedTime > note.endTime) {
+                if (note.type === '5' || note.type === '6') note.judgeResult = 'hit';
+            }
+        } else if (note.type !== 'BARLINE') {
+            if (elapsedTime >= note.time) {
+                note.judgeResult = 'hit';
+                const timeSinceLastEffect = elapsedTime - lastAutoEffectTime;
+                const skipEffect = timeSinceLastEffect < (1.0 / 60.0);
+                if (!skipEffect) lastAutoEffectTime = elapsedTime;
+                if (note.type === '1') {
+                    playSE('don');
+                    if (currentCombo % 2 === 0) {
+                        if (!skipEffect) showHitEffect('don-left');
+                    } else {
+                        if (!skipEffect) showHitEffect('don-right');
+                    }
+                } else if (note.type === '3') {
+                    playSE('don');
+                    if (!skipEffect) {
+                        showHitEffect('don-left');
+                        showHitEffect('don-right');
+                    }
+                } else if (note.type === '2') {
+                    playSE('ka');
+                    if (currentCombo % 2 === 0) {
+                        if (!skipEffect) showHitEffect('ka-left');
+                    } else {
+                        if (!skipEffect) showHitEffect('ka-right');
+                    }
+                } else if (note.type === '4') {
+                    playSE('ka');
+                    if (!skipEffect) {
+                        showHitEffect('ka-left');
+                        showHitEffect('ka-right');
+                    }
+                }
+                currentCombo++;
+                updateComboDisplay();
+                if (!skipEffect) showJudge('良', '#FFD700');
+            } else if (elapsedTime > note.time + JUDGE_BAD) {
+                note.judgeResult = 'miss';
+                currentCombo = 0;
+                updateComboDisplay();
+            }
+        }
+    }
+}
+
+function playerMissCheck(elapsedTime) {
+    if (!currentChartData) return;
+    for (const note of currentChartData.notes) {
+        if (note.judgeResult !== 'pending' || (note.type >= '5' && note.type <= '7') || note.type === 'BARLINE') continue;
+        if (note.type === '7' && note.hits === 0 && elapsedTime >= note.time) {
+            note.judgeResult = 'hit';
+            continue;
+        }
+        const diff = note.time - elapsedTime;
+        if (diff < -JUDGE_BAD) {
+            note.judgeResult = 'miss';
+            currentCombo = 0;
+            updateComboDisplay();
+            showJudge('不可', '#FF6347');
+        }
+    }
+}
+
+function handlePlayerInput(key) {
+    if (!isPlaying || isAutoPlay || !currentChartData || chartCoolDownUntil !== null) return;
+    initializeAudio();
+    let inputType = null, hitEffectType = null;
+    if (playerKeys.donL.includes(key)) { inputType = 'don'; hitEffectType = 'don-left'; }
+    else if (playerKeys.donR.includes(key)) { inputType = 'don'; hitEffectType = 'don-right'; }
+    else if (playerKeys.kaL.includes(key)) { inputType = 'ka'; hitEffectType = 'ka-left'; }
+    else if (playerKeys.kaR.includes(key)) { inputType = 'ka'; hitEffectType = 'ka-right'; }
+    if (!inputType) return;
+    
+    showHitEffect(hitEffectType);
+    playSE(inputType);
+    
+    const elapsedTime = currentElapsedTime;
+    const baseCenterY = jiroCanvas.height / 2;
+    let hitRoll = false;
+    
+    for (const note of currentChartData.notes) {
+        if (note.type < '5' || note.judgeResult !== 'pending' || !(elapsedTime >= note.time && elapsedTime <= note.endTime)) continue;
+        if (note.type === '5' || note.type === '6') {
+            hitRoll = true;
+            note.currentHits++;
+        } else if (note.type === '7') {
+            if (inputType === 'don') {
+                hitRoll = true;
+                note.currentHits++;
+                if (note.hits > 0 && note.currentHits >= note.hits) {
+                    note.judgeResult = 'hit';
+                    playSE('balloon');
+                }
+            }
+        }
+        if (hitRoll) break;
+    }
+    if (hitRoll) return;
+
+    let targetNote = null, minDiff = Infinity;
+    for (const note of currentChartData.notes) {
+        if (note.judgeResult !== 'pending' || (note.type >= '5' && note.type <= '7') || note.type === 'BARLINE') continue;
+        const diff = note.time - elapsedTime;
+        const absDiff = Math.abs(diff);
+        if (absDiff > JUDGE_BAD) continue;
+        
+        const noteType = (note.type === '1' || note.type === '3') ? 'don' : 'ka';
+        if (noteType !== inputType) continue;
+        if (absDiff < minDiff) {
+            minDiff = absDiff;
+            targetNote = note;
+        }
+    }
+    
+    if (targetNote) {
+        targetNote.judgeResult = 'hit';
+        if (minDiff <= JUDGE_PERFECT) {
+            showJudge('良', '#FFD700');
+            currentCombo++;
+        } else if (minDiff <= JUDGE_GOOD) {
+            showJudge('可', '#C0C0C0');
+            currentCombo++;
+        } else {
+            showJudge('不可', '#FF6347');
+            currentCombo = 0;
+        }
+        updateComboDisplay();
+    }
+}
+
+function updateLogic() {
+    if (audioContext && isPlaying) {
+        currentElapsedTime = simulationStartOffset + (audioContext.currentTime - simulationStartTime) * playbackSpeed;
+    } else if (!isPlaying) {
+        // 停止時は何もしない
+    } else {
+        currentElapsedTime += (1000 / 240) / 1000.0 * playbackSpeed;
+    }
+
+    if (chartCoolDownUntil !== null && currentElapsedTime >= chartCoolDownUntil) {
+        chartCoolDownUntil = null;
+    }
+    
+    if (currentChartData && currentChartData.endTime > 0 && currentElapsedTime > currentChartData.endTime + 1.0) {
+        if (currentChartData.allMeasureTimes.length > 0) {
+            currentElapsedTime = currentChartData.allMeasureTimes[currentChartData.allMeasureTimes.length - 1];
+            currentMeasureIndex = currentChartData.allMeasureTimes.length - 1;
+        } else {
+            currentElapsedTime = 0;
+            currentMeasureIndex = 0;
+        }
+        stopSimulation();
+        return;
+    }
+    
+    if (stopAtTime !== null && currentElapsedTime >= stopAtTime) {
+        stopSimulation();
+        currentElapsedTime = stopAtTime;
+        updateJiroPreview(currentElapsedTime);
+        return;
+    }
+    
+    updateChartState(currentElapsedTime);
+    if (chartCoolDownUntil === null) {
+        if (isAutoPlay) autoHitCheck(currentElapsedTime);
+        else playerMissCheck(currentElapsedTime);
+    }
+    
+    updateJiroUIElements();
+}
+
+function updateJiroUIElements() {
+    const totalDuration = currentChartData ? currentChartData.endTime : 0;
+    u('#jiro-time-display').text(`${currentElapsedTime.toFixed(2)} / ${totalDuration.toFixed(2)}s`);
+    
+    const seekbar = u('#jiro-seekbar').first();
+    if (seekbar && totalDuration > 0) {
+        seekbar.value = (currentElapsedTime / totalDuration) * 1000;
+    }
+}
+
+function drawLoop(timestamp) {
+    if (!isPlaying) return;
+    animationFrameId = requestAnimationFrame(drawLoop);
+    const elapsed = timestamp - lastFrameTime;
+    if (elapsed < 1000 / renderFPS) return;
+    lastFrameTime = timestamp - (elapsed % (1000 / renderFPS));
+    
+    updateJiroPreview(currentElapsedTime);
+}
+
+// プレビュー操作バインディング
+u('#jiro-btn-play').on('click', togglePlay);
+u('#jiro-btn-stop').on('click', resetSimulation);
+u('#jiro-chk-auto').on('change', (e) => { isAutoPlay = e.target.checked; });
+u('#jiro-vol-music').on('input', (e) => {
+    musicVolume = parseFloat(e.target.value) / 100;
+    if (musicGainNode) musicGainNode.gain.value = musicVolume;
+});
+u('#jiro-vol-se').on('input', (e) => {
+    seVolume = parseFloat(e.target.value) / 100;
+    if (seGainNode) seGainNode.gain.value = seVolume;
+});
+u('#jiro-seekbar').on('input', (e) => {
+    if (!currentChartData) return;
+    const ratio = parseFloat(e.target.value) / 1000;
+    const time = ratio * currentChartData.endTime;
+    setChartTime(time);
+});
+
+// キー入力イベントの登録
+window.addEventListener('keydown', (e) => {
+    if (selectedPage !== 'preview') return;
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'INPUT')) return;
+    
+    const keyUpper = e.key.toUpperCase();
+    if (['F', 'J', 'D', 'K'].includes(keyUpper)) {
+        if (e.repeat) return;
+        handlePlayerInput(keyUpper);
+    }
+    
+    if (e.key === ' ') {
+        e.preventDefault();
+        togglePlay();
+    }
+    if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        seekToMeasure(-1);
+    }
+    if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        seekToMeasure(1);
+    }
+});
+
+// 自動ロード
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('tja_tools_autosave');
+    if (saved) {
+        u('.input').first().value = saved;
+        processFunc();
+    }
+});
+</script>
+</body>
+</html>
