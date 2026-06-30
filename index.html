@@ -149,30 +149,6 @@
     #density-svg-wrapper { width: 100%; display: block; }
     .stat-graph line { stroke: #333; }
     .stat-graph text { fill: #aaa; font-size: 10px; font-family: monospace; }
-
-    /* プレビュー特効エフェクト用 */
-    .jiro-effect {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0;
-      transition: opacity 0.15s ease-out;
-      z-index: 5;
-    }
-    .jiro-effect.effect-fade {
-      opacity: 1;
-      transition-duration: 0s;
-    }
-
-    /* ゴーゴータイムのアニメーション */
-    @keyframes gogoBgAnim {
-      0% { background: linear-gradient(to right, #e63900, #ff8c00); }
-      50% { background: linear-gradient(to right, #cc2c00, #ffaa00); }
-      100% { background: linear-gradient(to right, #e63900, #ff8c00); }
-    }
-    .gogo-time-bg {
-      animation: gogoBgAnim 0.6s ease-in-out infinite alternate;
-    }
   </style>
 </head>
 <body>
@@ -201,41 +177,38 @@
           <div id="jiro-preview-container" class="w-full relative overflow-hidden rounded" style="background: #111; border: 3px solid #222; height: 110px; outline: none; touch-action: none; user-select: none;" tabindex="0">
             <div class="lane absolute top-0 bottom-0 left-0 right-0 bg-[rgba(0,0,0,0.15)] border-t border-b border-[rgba(255,255,255,0.1)]"></div>
             
-            <!-- リアルタイム経過小節カウンター表示レイヤー -->
-            <div id="jiro-measure-display" class="absolute left-[120px] top-[8px] z-30 pointer-events-none text-[10px] font-semibold text-white bg-[rgba(0,0,0,0.6)] px-2 py-0.5 rounded" style="white-space: nowrap;">経過: 0 / 0</div>
+            <!-- 小節番号・再生時間などを表示するレイヤー -->
+            <div id="jiro-measure-display" class="absolute left-[120px] top-[8px] z-30 pointer-events-none text-[10px] font-semibold text-white bg-[rgba(0,0,0,0.6)] px-2 py-0.5 rounded" style="white-space: nowrap;">小節: 0 / 0</div>
             
             <canvas id="jiro-previewCanvas" class="w-full h-full absolute top-0 left-0" style="z-index: 20; pointer-events: none;"></canvas>
           </div>
 
-          <!-- 再生コントロールパネル (スマートフォン対応・小節送り戻しボタン追加) -->
+          <!-- 再生コントロールパネル (スマートフォン対応・小節送りボタン追加) -->
           <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; color: #aaa; background: #222; padding: 8px 12px; border-radius: 4px; border: 1px solid #333; margin-top: 8px; margin-bottom: 8px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
-              <button class="button" id="jiro-btn-play" style="background: #007bff; color: white; border: none; padding: 8px 14px; font-weight: bold; border-radius: 4px; font-size: 12px; cursor: pointer;">再生</button>
-              <button class="button" id="jiro-btn-stop" style="background: #dc3545; color: white; border: none; padding: 8px 14px; font-weight: bold; border-radius: 4px; font-size: 12px; cursor: pointer;">停止</button>
-              
-              <!-- 小節送り戻しボタン -->
-              <button class="button" id="jiro-btn-prev" style="background: #555; color: white; border: none; padding: 8px 12px; font-weight: bold; border-radius: 4px; font-size: 12px; cursor: pointer;">◀ 前</button>
-              <button class="button" id="jiro-btn-next" style="background: #555; color: white; border: none; padding: 8px 12px; font-weight: bold; border-radius: 4px; font-size: 12px; cursor: pointer;">次 ▶</button>
-              
-              <span id="jiro-time-display" style="font-size: 11px; font-family: monospace; margin-left: 4px;">0.00 / 0.00s</span>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <button class="button" id="jiro-btn-play" style="background: #007bff; color: white; border: none; padding: 8px 14px; font-weight: bold; border-radius: 4px; font-size: 11px;">再生</button>
+              <button class="button" id="jiro-btn-stop" style="background: #dc3545; color: white; border: none; padding: 8px 14px; font-weight: bold; border-radius: 4px; font-size: 11px;">停止</button>
+              <button class="button" id="jiro-btn-prev" style="background: #444; color: white; border: 1px solid #555; padding: 8px 12px; font-weight: bold; border-radius: 4px; font-size: 11px;">◀ 前の小節</button>
+              <button class="button" id="jiro-btn-next" style="background: #444; color: white; border: 1px solid #555; padding: 8px 12px; font-weight: bold; border-radius: 4px; font-size: 11px;">▶ 次の小節</button>
+              <span id="jiro-time-display" style="font-size: 12px; font-family: monospace; margin-left: 4px;">0.00 / 0.00s</span>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <span style="font-size: 10px;">音量:</span>
-              <input type="range" id="jiro-vol-music" min="0" max="100" value="80" style="width: 50px; height: 3px; cursor: pointer;">
-              <span style="font-size: 10px;">SE:</span>
-              <input type="range" id="jiro-vol-se" min="0" max="100" value="80" style="width: 50px; height: 3px; cursor: pointer;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <span style="font-size: 11px;">音量:</span>
+              <input type="range" id="jiro-vol-music" min="0" max="100" value="80" style="width: 60px; height: 5px; cursor: pointer;">
+              <span style="font-size: 11px;">SE:</span>
+              <input type="range" id="jiro-vol-se" min="0" max="100" value="80" style="width: 60px; height: 5px; cursor: pointer;">
             </div>
           </div>
 
           <!-- シークバー (タッチしやすいように太さを少し確保) -->
           <div style="width: 100%; display: flex; align-items: center; padding: 4px 0;">
-            <input type="range" id="jiro-seekbar" min="0" max="1000" value="0" style="width: 100%; height: 5px; cursor: pointer;">
+            <input type="range" id="jiro-seekbar" min="0" max="1000" value="0" style="width: 100%; height: 8px; cursor: pointer;">
           </div>
           
           <!-- ミニキーボード解説 -->
           <div style="width: 100%; margin-top: 8px; text-align: left; font-size: 10px; color: #777; line-height: 1.4; border-top: 1px solid #2a2a2a; padding-top: 6px;">
-            ※ [Space] で再生/一時停止。停止中 [←]/[→] で1小節シークします。<br>
-            ※ ドン: [F], [J]、カッ: [D], [K] (プレビュー枠をフォーカスした状態でキーを押してください)
+            ※ 譜面確認用のオート演奏ビューアです。再生中の自動打鍵に合わせて、太鼓や判定枠が光ります。<br>
+            ※ [Space] で再生/一時停止。停止中 [←]/[→] で1小節シークします。
           </div>
         </div>
       </div>
@@ -307,7 +280,7 @@
 </footer>
 
 <script>
-/** 1. 定数・変数定義 **/
+/** 定数 **/
 const CHART_PADDING_TOP = 130, CHART_PADDING_BOTTOM = 20, CHART_BG = '#cccccc';
 const ROW_MARGIN_BOTTOM = 20, ROW_HEIGHT_INFO = 18, ROW_HEIGHT_NOTE = 34, ROW_HEIGHT = ROW_HEIGHT_INFO + ROW_HEIGHT_NOTE;
 const ROW_OFFSET_NOTE_CENTER = ROW_HEIGHT_INFO + (ROW_HEIGHT_NOTE / 2), ROW_LEADING = 30, ROW_TRAILING = 30, BEAT_WIDTH = 48, NOTE_RADIUS = 9;
@@ -319,91 +292,6 @@ const getRowY = (row) => CHART_PADDING_TOP + ((ROW_HEIGHT + ROW_MARGIN_BOTTOM) *
 /** mc2tja 統合ロジック **/
 const gcd = (a, b) => b ? gcd(b, a % b) : a;
 const lcm = (a, b) => (a === 0 || b === 0) ? 0 : Math.abs(a * b) / gcd(a, b);
-
-let tjaParsed = null, selectedDifficulty = '', selectedPage = 'editor', zoomLevel = 100;
-
-/** 次郎風プレビュー用グローバル変数 **/
-let audioContext = null;
-let musicAudioBuffer = null;
-let musicSourceNode = null;
-let seGainNode = null;
-let musicGainNode = null;
-const audioBuffers = {};
-
-let isPlaying = false;
-let currentElapsedTime = 0.0;
-let simulationStartOffset = 0.0;
-let simulationStartTime = 0.0;
-let lastFrameTime = 0;
-let animationFrameId = null;
-let logicIntervalId = null;
-
-// オートプレイ固定
-const isAutoPlay = true;
-let currentCombo = 0;
-let currentMeasureIndex = 0;
-let currentChartData = null; // 太鼓さん次郎プレビュー用に変換した高精度データ
-let autoRollSpeed = 30; // オートプレイ時の秒間打鍵
-let renderFPS = 60;
-let scrollMultiplier = 1.0;
-let seVolume = 0.8;
-let musicVolume = 0.8;
-let playbackSpeed = 1.0;
-let lastAutoEffectTime = 0;
-let stopAtTime = null;
-let chartCoolDownUntil = null;
-const coolDownTime = 1.0;
-
-let playerKeys = { donL: ['F'], donR: ['J'], kaL: ['D'], kaR: ['K'] };
-let lastSEPlayTime = { don: 0, ka: 0, balloon: 0 };
-let hitEffectTimeout = { donLeft: null, donRight: null, kaLeft: null, kaRight: null };
-
-// 太鼓さん次郎仕様の判定位置（通常スクロールのみ対応）
-const HIT_POSITION_X_DEFAULT = 175;
-let HIT_POSITION_X = 175;
-const BASE_SCROLL_FACTOR = 2.0;
-const JPOS_INPUT_STANDARD_WIDTH = 946;
-const JPOS_ACTUAL_MEASURE_WIDTH = 480;
-
-const NOTE_COLORS = { '1': '#F44336', '2': '#2196F3', '3': '#F44336', '4': '#2196F3', '5': '#FFC107', '6': '#FFC107', '7': '#f97902' };
-const NOTE_SIZE = { '1': 15, '2': 15, '3': 22.5, '4': 22.5, '5': 15, '6': 22.5, '7': 22.5 };
-const JUDGE_PERFECT = 0.025, JUDGE_GOOD = 0.075, JUDGE_BAD = 0.107;
-
-let state_commandIndex = 0;
-let state_currentBPM = 120;
-let state_isGogo = false;
-let state_jposStartTime = -Infinity;
-let state_jposDuration = 0;
-let state_jposStartX = HIT_POSITION_X_DEFAULT;
-let state_jposEndX = HIT_POSITION_X_DEFAULT;
-let state_jposEasing = 0;
-
-// 打鍵ビジュアル演出用の直近打鍵タイムスタンプ
-let lastDonHitTime = 0;
-let lastKaHitTime = 0;
-
-let uploadedMusicFileName = "";
-let uploadedMusicObjectURL = null;
-
-// メモリリーク対策: 毎フレームのDOM検索負荷を防ぐキャッシュ宣言
-let cacheJiroMeasureDisplay = null;
-let cacheJiroRollDisplay = null;
-let cacheJiroTimeDisplay = null;
-let cacheJiroSeekbar = null;
-
-// 変更検知（Dirty Checking）用状態キャッシュ
-let prevPassedBarlines = -1;
-let prevTotalBarlines = -1;
-let prevRollOpacity = -1;
-let prevRollText = "";
-let prevTimeText = "";
-let prevSeekbarValue = -1;
-
-// IndexedDB
-let db = null;
-
-
-/** 2. ユーティリティ・パース関数群 **/
 
 function convertMCtoTJA(mcContent) {
     const mc = JSON.parse(mcContent); 
@@ -955,16 +843,9 @@ function parseTJAForPreview(text) {
         } 
         chart.commands.sort((a, b) => a.time - b.time); 
         chart.endTime = (chart.notes.length > 0) ? chart.notes.reduce((max, note) => Math.max(max, note.endTime || note.time), 0) : 0; 
-
-        // スマートフォン負荷対策: パース完了の瞬間に「小節線（barlines）」と「音符ノーツ（hitNotes）」を分類して一度だけキャッシュ
-        chart.barlines = chart.notes.filter(n => n.type === 'BARLINE');
-        chart.hitNotes = chart.notes.filter(n => n.type !== 'BARLINE');
     } 
     return { globalConfig, courses };
 }
-
-
-/** 3. Canvas 描画用補助関数 **/
 
 const drawLine = (ctx, sx, sy, ex, ey, w, s) => { ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.lineWidth = w; ctx.strokeStyle = s; ctx.stroke(); };
 const drawRect = (ctx, x, y, w, h, f) => { ctx.fillStyle = f; ctx.fillRect(x, y, w, h); };
@@ -1081,9 +962,7 @@ function drawChart(chart, courseId) {
   return canvas;
 }
 
-
-/** 4. 統計・グラデーション設定 **/
-
+/** 統計ロジック **/
 function getStats(chart, courseId) {
   const course = chart.courses[courseId];
   let combo = 0, firstT = null, lastT = 0, currentBpm = chart.headers.bpm;
@@ -1299,8 +1178,494 @@ function replaceGradation() {
     } catch (e) { u('.errors').text(e.message); }
 }
 
+/** UI Logic **/
+let tjaParsed = null, selectedDifficulty = '', selectedPage = 'editor', zoomLevel = 100;
 
-/** 5. Audio初期化・シーク状態制御一元管理 **/
+/** 次郎風プレビュー用 **/
+let audioContext = null;
+let musicAudioBuffer = null;
+let musicSourceNode = null;
+let seGainNode = null;
+let musicGainNode = null;
+const audioBuffers = {};
+
+let isPlaying = false;
+let currentElapsedTime = 0.0;
+let simulationStartOffset = 0.0;
+let simulationStartTime = 0.0;
+let lastFrameTime = 0;
+let animationFrameId = null;
+let logicIntervalId = null;
+
+// オートプレイ固定
+const isAutoPlay = true;
+let currentCombo = 0;
+let currentMeasureIndex = 0;
+let currentChartData = null; // 太鼓さん次郎プレビュー用に変換した高精度データ
+let autoRollSpeed = 30; // オートプレイ時の秒間打鍵
+let renderFPS = 60;
+let scrollMultiplier = 1.0;
+let seVolume = 0.8;
+let musicVolume = 0.8;
+let playbackSpeed = 1.0;
+let lastAutoEffectTime = 0;
+let stopAtTime = null;
+let chartCoolDownUntil = null;
+const coolDownTime = 1.0;
+
+let playerKeys = { donL: ['F'], donR: ['J'], kaL: ['D'], kaR: ['K'] };
+let lastSEPlayTime = { don: 0, ka: 0, balloon: 0 };
+let hitEffectTimeout = { donLeft: null, donRight: null, kaLeft: null, kaRight: null };
+
+// 太鼓さん次郎仕様の判定位置（通常スクロールのみ対応）
+const HIT_POSITION_X_DEFAULT = 175;
+let HIT_POSITION_X = 175;
+const BASE_SCROLL_FACTOR = 2.0;
+const JPOS_INPUT_STANDARD_WIDTH = 946;
+const JPOS_ACTUAL_MEASURE_WIDTH = 480;
+
+const NOTE_COLORS = { '1': '#F44336', '2': '#2196F3', '3': '#F44336', '4': '#2196F3', '5': '#FFC107', '6': '#FFC107', '7': '#f97902' };
+const NOTE_SIZE = { '1': 15, '2': 15, '3': 22.5, '4': 22.5, '5': 15, '6': 22.5, '7': 22.5 };
+const JUDGE_PERFECT = 0.025, JUDGE_GOOD = 0.075, JUDGE_BAD = 0.107;
+
+let state_commandIndex = 0;
+let state_currentBPM = 120;
+let state_isGogo = false;
+let state_jposStartTime = -Infinity;
+let state_jposDuration = 0;
+let state_jposStartX = HIT_POSITION_X_DEFAULT;
+let state_jposEndX = HIT_POSITION_X_DEFAULT;
+let state_jposEasing = 0;
+
+// 打鍵ビジュアル演出用の直近打鍵タイムスタンプ（演奏時間軸に連動）
+let lastDonHitTime = -100;
+let lastKaHitTime = -100;
+
+// コンボ弾みアニメーション用スケール
+let comboBounceScale = 1.0;
+
+let uploadedMusicFileName = "";
+let uploadedMusicObjectURL = null;
+
+// IndexedDB 設定
+let db = null;
+function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('TJAEditorDB', 1);
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('files')) {
+                db.createObjectStore('files', { keyPath: 'id' });
+            }
+        };
+        request.onsuccess = (event) => {
+            db = event.target.result;
+            resolve(db);
+        };
+        request.onerror = (event) => {
+            console.error('IndexedDB error:', event.target.errorCode);
+            reject(event.target.errorCode);
+        };
+    });
+}
+
+function saveData(storeName, data) {
+    if (!db) return Promise.reject("DB not initialized");
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.put(data);
+        request.onsuccess = () => resolve();
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
+
+function loadData(storeName, id) {
+    if (!db) return Promise.reject("DB not initialized");
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction([storeName], 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.get(id);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
+
+function calculateEasing(t, type) { switch (type) { case 0: default: return t; } }
+
+function updateUI() {
+  u('.controls-diff .button').addClass('is-hidden');
+  if(tjaParsed && tjaParsed.courses) Object.keys(tjaParsed.courses).forEach(d => u(`.btn-diff-${d}`).removeClass('is-hidden'));
+  u('.button.is-active').removeClass('is-active');
+  u(`.btn-diff-${selectedDifficulty}`).addClass('is-active');
+  u(`.btn-page-${selectedPage}`).addClass('is-active');
+  u('.page').addClass('is-hidden'); u(`.page-${selectedPage}`).removeClass('is-hidden');
+  if (tjaParsed && selectedDifficulty !== '') {
+    if (selectedPage === 'editor') {
+      const generatedCanvas = drawChart(tjaParsed, selectedDifficulty);
+      
+      const viewCanvas = document.createElement('canvas');
+      viewCanvas.width = generatedCanvas.width;
+      viewCanvas.height = generatedCanvas.height;
+      viewCanvas.style.width = generatedCanvas.style.width;
+      viewCanvas.style.height = generatedCanvas.style.height;
+      const viewCtx = viewCanvas.getContext('2d');
+      viewCtx.drawImage(generatedCanvas, 0, 0);
+
+      u('.page-editor').empty().append(viewCanvas);
+      u('.page-editor').first().style.width = zoomLevel + '%';
+    } else if (selectedPage === 'preview') {
+      updateJiroPreview(currentElapsedTime);
+    } else if (selectedPage === 'statistics') {
+      const s = getStats(tjaParsed, selectedDifficulty); const dNames = ['かんたん','ふつう','むずかしい','おに','裏おに']; const c = tjaParsed.courses[selectedDifficulty];
+      u('#st-title').text(tjaParsed.headers.title); u('#st-subtitle').text(tjaParsed.headers.subtitle || '');
+      u('#st-diff').text(`${dNames[c.course]} ★${c.headers.level}`);
+      let bStr = s.minBpm === s.maxBpm ? `${formatBpm(s.minBpm)}` : `${formatBpm(s.minBpm)}-${formatBpm(s.maxBpm)} (${formatBpm(s.mainBpm)})`;
+      u('#st-bpm').text(bStr); u('#st-notes').text(s.combo); u('#st-time').text(s.perfTime.toFixed(2)+"s"); u('#st-density').text(s.density.toFixed(3)+" /s");
+      
+      // シンプルな連打情報の構築
+      let rendaHtml = `
+        <div style="margin-bottom: 8px;">
+          <div style="color: #a0a0a0; font-weight: bold; margin-bottom: 2px;">黄色連打</div>
+          <div style="word-break: break-all; color: #e0e0e0;">`;
+      
+      if (s.rendas && s.rendas.length > 0) {
+        rendaHtml += `${s.rendas.map(r => r.toFixed(2) + "s").join(" + ")}<br>`;
+        rendaHtml += `(合計: ${s.rendas.reduce((a,b)=>a+b,0).toFixed(2)}s)`;
+      } else {
+        rendaHtml += `0.00s<br>(合計: 0.00s)`;
+      }
+      
+      rendaHtml += `
+          </div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0; font-weight: bold; margin-bottom: 2px;">風船連打</div>
+          <div style="word-break: break-all; color: #e0e0e0;">`;
+
+      const balloons = c.headers.balloon;
+      if (balloons && balloons.length > 0) {
+        const balloonSum = balloons.reduce((a, b) => a + b, 0);
+        rendaHtml += `${balloons.map(b => b + "打").join(" + ")}<br>`;
+        rendaHtml += `(合計: ${balloonSum}打)`;
+      } else {
+        rendaHtml += `なし<br>(合計: 0打)`;
+      }
+      
+      rendaHtml += `
+          </div>
+        </div>
+      `;
+      
+      u('#st-renda').html(rendaHtml); drawDensityGraph(s.measures);
+    }
+  }
+}
+
+/** エディタ文字色分け用のハイライトヘルパー **/
+let errorLineNumber = null; 
+
+function escapeHtml(string) {
+  return string.replace(/&/g, '&amp;')
+               .replace(/</g, '&lt;')
+               .replace(/>/g, '&gt;')
+               .replace(/"/g, '&quot;')
+               .replace(/'/g, '&#039;');
+}
+
+function highlightTJA(text) {
+  const lines = text.split('\n');
+  let rendaState = 0; // 0:通常, 5:黄連打中(5,6), 7:風船連打中(7)
+
+  const highlightedLines = lines.map((line, lineIndex) => {
+    const isErrorLine = (lineIndex === errorLineNumber - 1);
+    const trimmed = line.trim();
+    
+    let lineHtml = "";
+    if (trimmed.startsWith('//')) {
+      lineHtml = `<span style="color: #888888; font-style: italic;">${escapeHtml(line)}</span>`;
+    } else if (trimmed.startsWith('#')) {
+      lineHtml = `<span style="color: #58a6ff; font-weight: bold;">${escapeHtml(line)}</span>`; 
+    } else if (trimmed.includes(':') && !trimmed.match(/^[0-9]/)) {
+      lineHtml = `<span style="color: #ffffff; font-weight: bold;">${escapeHtml(line)}</span>`; 
+    } else {
+      let result = "";
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const escapedChar = escapeHtml(char);
+        const textShadow = "text-shadow: 0 0 2px rgba(0,0,0,0.8), 0 0 4px rgba(255,255,255,0.05);";
+        
+        if (rendaState === 5) {
+          result += `<span style="color: #ffff00; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          if (char === '8') {
+            rendaState = 0; 
+          }
+        } else if (rendaState === 7) {
+          result += `<span style="color: #ff9100; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          if (char === '8') {
+            rendaState = 0; 
+          }
+        } else {
+          if (char === '5' || char === '6') {
+            rendaState = 5;
+            result += `<span style="color: #ffff00; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          } else if (char === '7') {
+            rendaState = 7;
+            result += `<span style="color: #ff9100; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
+          } else if (char === '1' || char === '3') {
+            result += `<span style="color: #ff3333; font-weight: bold; ${textShadow}">${escapedChar}</span>`; 
+          } else if (char === '2' || char === '4') {
+            result += `<span style="color: #33ebff; font-weight: bold; ${textShadow}">${escapedChar}</span>`; 
+          } else {
+            result += escapedChar;
+          }
+        }
+      }
+      lineHtml = result;
+    }
+
+    if (isErrorLine) {
+      return `<div class="error-line-highlight" style="background-color: rgba(255, 0, 0, 0.25); display: inline-block; width: 100%;">${lineHtml}</div>`;
+    }
+    return lineHtml;
+  });
+  return highlightedLines.join('\n');
+}
+
+const textarea = u('.input').first();
+const backdrop = u('.backdrop').first();
+const highlightDiv = u('.highlight').first();
+
+function updateLineNumbers(text) {
+  const lineNumbers = u('.line-numbers').first();
+  if (!lineNumbers) return;
+  const linesCount = text.split('\n').length;
+  let html = "";
+  for (let i = 1; i <= linesCount; i++) {
+    const isError = (i === errorLineNumber);
+    const style = isError ? "color: #ff5555; font-weight: bold; background: rgba(255, 0, 0, 0.2);" : "";
+    html += `<span class="ln-${i}" style="${style}">${i}</span>`;
+  }
+  lineNumbers.innerHTML = html;
+  syncScroll();
+}
+
+function syncScroll() {
+  backdrop.scrollTop = textarea.scrollTop;
+  backdrop.scrollLeft = textarea.scrollLeft;
+  const lineNumbers = u('.line-numbers').first();
+  if (lineNumbers) {
+    lineNumbers.scrollTop = textarea.scrollTop;
+  }
+}
+
+textarea.addEventListener('scroll', syncScroll);
+
+let pendingHighlightUpdate = false;
+function updateHighlight() {
+  if (pendingHighlightUpdate) return;
+  pendingHighlightUpdate = true;
+  requestAnimationFrame(() => {
+    const text = textarea.value;
+    highlightDiv.innerHTML = highlightTJA(text) + '\n';
+    updateLineNumbers(text); 
+    syncScroll();
+    pendingHighlightUpdate = false;
+  });
+}
+
+let debounceTimer = null;
+const processFunc = () => {
+  const val = u('.input').first().value; if(!val) return;
+  
+  updateHighlight();
+  
+  if (debounceTimer) clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    try {
+      tjaParsed = parseTJA(val);
+      if (!selectedDifficulty || !tjaParsed.courses[selectedDifficulty]) selectedDifficulty = Object.keys(tjaParsed.courses)[0];
+      
+      // 次郎風プレビュー用の前処理データを作成 (プレビュー専用の高精度パーサーを使用)
+      const parsedForPreview = parseTJAForPreview(val);
+      currentChartData = parsedForPreview.courses[selectedDifficulty] || null;
+      if (currentChartData) {
+        // TJA OFFSET の設定もここから直接取得
+        tjaParsed.headers.offset = parsedForPreview.globalConfig.OFFSET;
+        setChartTime(currentElapsedTime);
+      }
+
+      updateUI();
+      u('.errors').text('No error');
+      
+      if (errorLineNumber !== null) {
+        errorLineNumber = null;
+        updateHighlight();
+      }
+      
+      localStorage.setItem('tja_tools_autosave', val);
+    } catch(e) { 
+      u('.errors').text(e.message);
+      
+      const match = e.message.match(/(?:行|line)\s*([0-9]+)/i);
+      if (match) {
+        errorLineNumber = parseInt(match[1], 10);
+      } else {
+        errorLineNumber = null;
+      }
+      updateHighlight(); 
+    }
+  }, 150);
+};
+
+u('.input').on('input', processFunc);
+u('#btn-open').on('click', () => u('#file-input').first().click());
+
+// インポート拡張: ZIP, MCZ音源自動読み込みと単品音源読み込み
+u('#file-input').on('change', async (e) => {
+    const f = e.target.files[0]; if(!f) return;
+    const ext = f.name.split('.').pop().toLowerCase();
+    const allowed = ["tja", "mc", "txt", "zip", "mcz", "mp3", "m4a", "wav", "ogg"];
+    if (!allowed.includes(ext)) { u('.errors').text("エラー: 対応していない形式です (.tja, .mc, .zip 等のみ)"); return; }
+    try {
+        let content = ""; const ab = await f.arrayBuffer();
+        if (f.name.toLowerCase().match(/\.(zip|mcz)$/)) {
+            const zip = await JSZip.loadAsync(ab);
+            const tjaF = Object.values(zip.files).find(file => file.name.toLowerCase().endsWith('.tja') || file.name.toLowerCase().endsWith('.mc'));
+            if (!tjaF) throw new Error("譜面が見つかりません");
+            const buf = await tjaF.async("arraybuffer");
+            content = tjaF.name.endsWith('.mc') ? convertMCtoTJA(await loadFileWithEncoding(buf)) : await loadFileWithEncoding(buf);
+
+            // TJAを一時解析してWAVE指定を取得
+            const tempParsed = parseTJA(content);
+            const waveName = tempParsed.headers.wave ? tempParsed.headers.wave.toLowerCase() : "";
+            
+            let audioFileInZip = null;
+            if (waveName) {
+                audioFileInZip = Object.values(zip.files).find(file => {
+                    const fname = file.name.split('/').pop().toLowerCase();
+                    return fname === waveName;
+                });
+            }
+            if (!audioFileInZip) {
+                const audioExts = [".mp3", ".m4a", ".wav", ".ogg"];
+                audioFileInZip = Object.values(zip.files).find(file => {
+                    const nameLower = file.name.toLowerCase();
+                    return audioExts.some(ext => nameLower.endsWith(ext));
+                });
+            }
+            
+            if (audioFileInZip) {
+                initializeAudio();
+                const audioData = await audioFileInZip.async("arraybuffer");
+                try {
+                    musicAudioBuffer = await audioContext.decodeAudioData(audioData);
+                    uploadedMusicFileName = audioFileInZip.name.split('/').pop();
+                    if (uploadedMusicObjectURL) URL.revokeObjectURL(uploadedMusicObjectURL);
+                    uploadedMusicObjectURL = URL.createObjectURL(new Blob([audioData]));
+                    u('#music-filename-display').text(`音源: ${uploadedMusicFileName}`);
+
+                    // IndexedDBへ楽曲を保存
+                    await saveData('files', { id: 'music', name: uploadedMusicFileName, data: new Blob([audioData]) });
+                } catch (decErr) {
+                    console.error("音源デコードエラー:", decErr);
+                    u('.errors').text("音源ファイルのデコードに失敗しました: " + decErr.message);
+                }
+            } else {
+                u('#music-filename-display').text("音源: 未ロード");
+            }
+        } else if (f.name.toLowerCase().match(/\.(mp3|m4a|wav|ogg)$/)) {
+            initializeAudio();
+            try {
+                musicAudioBuffer = await audioContext.decodeAudioData(ab.slice(0));
+                uploadedMusicFileName = f.name;
+                if (uploadedMusicObjectURL) URL.revokeObjectURL(uploadedMusicObjectURL);
+                uploadedMusicObjectURL = URL.createObjectURL(f);
+                u('#music-filename-display').text(`音源: ${uploadedMusicFileName}`);
+
+                // IndexedDBへ楽曲を保存
+                await saveData('files', { id: 'music', name: uploadedMusicFileName, data: f });
+            } catch (decErr) {
+                console.error("音源デコードエラー:", decErr);
+                u('.errors').text("音源ファイルのデコードに失敗しました: " + decErr.message);
+            }
+            e.target.value = null;
+            return;
+        } else { 
+            content = f.name.endsWith('.mc') ? convertMCtoTJA(await loadFileWithEncoding(ab)) : await loadFileWithEncoding(ab); 
+        }
+        u('.input').first().value = content; processFunc();
+    } catch(err) { u('.errors').text(err.message); }
+    e.target.value = null;
+});
+
+u('#zoom-in').on('click', (e) => { e.preventDefault(); zoomLevel += 20; updateUI(); });
+u('#zoom-out').on('click', (e) => { e.preventDefault(); zoomLevel = Math.max(100, zoomLevel - 20); updateUI(); });
+u('#btn-save').on('click', () => {
+  const cv = u('canvas').first(); if (!cv) return;
+  const link = document.createElement('a'); link.download = (tjaParsed.headers.title || 'chart') + '.png'; link.href = cv.toDataURL(); link.click();
+});
+u('#btn-tja-save').on('click', () => {
+  if (!tjaParsed) return;
+  const codes = Encoding.convert(Encoding.stringToCode(u('.input').first().value), 'SJIS', 'UNICODE');
+  const blob = new Blob([new Uint8Array(codes)], { type: 'application/octet-stream' });
+  const name = (tjaParsed.headers.wave || "chart.tja").split('.')[0] + ".tja";
+  const link = document.createElement('a'); link.download = name; link.href = URL.createObjectURL(blob); link.click();
+});
+u('#btn-grad-replace').on('click', () => { replaceGradation(); processFunc(); });
+u('.controls-diff .button[data-value]').on('click', e => { 
+  selectedDifficulty = u(e.target).data('value'); 
+  currentChartData = preparePreviewChart(tjaParsed, selectedDifficulty);
+  if (currentChartData) setChartTime(0);
+  updateUI(); 
+});
+u('.controls-page .button[data-value]').on('click', e => { 
+  selectedPage = u(e.target).data('value'); 
+  // プレビュー画面がアクティブのときは譜面エディタ(左側)を非表示にする
+  if (selectedPage === 'preview') {
+    u('.pane-left').addClass('is-hidden');
+  } else {
+    u('.pane-left').removeClass('is-hidden');
+  }
+  updateUI(); 
+});
+
+// 合成ビープ音による効果音生成（フォールバック用）
+function createSynthesizedAudioBuffer(ctx, type) {
+    const rate = ctx.sampleRate || 44100;
+    const duration = 0.12;
+    const length = rate * duration;
+    const buffer = ctx.createBuffer(1, length, rate);
+    const data = buffer.getChannelData(0);
+    if (type === 'don') {
+        for (let i = 0; i < length; i++) {
+            const t = i / rate;
+            data[i] = Math.sin(2 * Math.PI * 140 * Math.exp(-35 * t)) * Math.exp(-12 * t);
+        }
+    } else if (type === 'ka') {
+        for (let i = 0; i < length; i++) {
+            const t = i / rate;
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-45 * t) * 0.4 + Math.sin(2 * Math.PI * 380 * Math.exp(-25 * t)) * Math.exp(-18 * t) * 0.25;
+        }
+    } else { // balloon
+        for (let i = 0; i < length; i++) {
+            const t = i / rate;
+            data[i] = Math.sin(2 * Math.PI * 750 * Math.exp(-12 * t)) * Math.exp(-8 * t) * 0.45;
+        }
+    }
+    return buffer;
+}
+
+async function loadAudioBuffer(url, key) {
+    if (!audioContext) return;
+    try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        audioBuffers[key] = await audioContext.decodeAudioData(arrayBuffer);
+    } catch (e) { 
+        console.warn(`Failed to load online audio, using synthesis fallback instead.`, e); 
+    }
+}
 
 function initializeAudio() {
     if (!audioContext) {
@@ -1370,12 +1735,16 @@ function updateChartState(timeSec) {
         state_commandIndex++;
     }
     HIT_POSITION_X = HIT_POSITION_X_DEFAULT;
+    const hitCircleEl = u('#jiro-preview-container .hit-circle').first();
+    if (hitCircleEl) {
+        hitCircleEl.style.left = (HIT_POSITION_X - 30) + 'px';
+    }
     u('#jiro-preview-container').toggleClass('gogo-time-bg', state_isGogo);
 }
 
 function seekChartState(timeSec) {
     state_commandIndex = 0;
-    state_currentBPM = (currentChartData && currentChartData.commands.length > 0) ? currentChartData.commands[0].value : 120;
+    state_currentBPM = tjaParsed ? (tjaParsed.headers.bpm || 120) : 120;
     state_isGogo = false;
     state_jposStartTime = -Infinity;
     state_jposDuration = 0;
@@ -1405,6 +1774,304 @@ function seekChartState(timeSec) {
         state_commandIndex++;
     }
     updateChartState(timeSec);
+}
+
+// 譜面画像 (drawChart) と完全に統一された美しい多重フチ付きノーツ描画
+function drawJiroPremiumNote(ctx, x, y, type) {
+    const isBig = (type === '3' || type === '4' || type === '6' || type === '7');
+    const r = isBig ? 21 : 14;
+    const color = NOTE_COLORS[type] || '#FFFFFF';
+    
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#000000';
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.arc(x, y, r - 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.arc(x, y, r - 3, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+const jiroCanvas = document.getElementById('jiro-previewCanvas');
+const jiroCtx = jiroCanvas.getContext('2d');
+
+function updateJiroPreview(time = currentElapsedTime) {
+    if (!currentChartData) {
+        jiroCtx.clearRect(0, 0, jiroCanvas.width, jiroCanvas.height);
+        seekChartState(0);
+        return;
+    }
+    
+    // スマホ対応高解像度自動スケーリング対応
+    const dpr = window.devicePixelRatio || 1;
+    const rectWidth = jiroCanvas.clientWidth || 946;
+    const rectHeight = jiroCanvas.clientHeight || 110;
+    
+    jiroCanvas.width = rectWidth * dpr;
+    jiroCanvas.height = rectHeight * dpr;
+    
+    jiroCtx.resetTransform();
+    jiroCtx.scale(dpr, dpr);
+    
+    seekChartState(time);
+    const elapsedTime = time;
+    const baseCenterY = rectHeight / 2; // 正確な上下中央（55px）
+    const canvasMargin = 100;
+    jiroCtx.clearRect(0, 0, rectWidth, rectHeight);
+    
+    // 1. レーンの背景（ゴーゴータイム対応）
+    const laneHeight = 54; // レーン高さを適切に拡大（音符はみ出し防止）
+    const laneTop = baseCenterY - (laneHeight / 2);
+    
+    // 通常背景描画
+    jiroCtx.fillStyle = '#333333';
+    jiroCtx.fillRect(0, laneTop, rectWidth, laneHeight);
+
+    // ゴーゴー背景グラデーションをレーン内のみに適用 (左側は濃いオレンジ、右へ行くほど徐々に薄く)
+    if (state_isGogo) {
+        const grad = jiroCtx.createLinearGradient(110, 0, rectWidth, 0);
+        grad.addColorStop(0, 'rgba(255, 69, 0, 0.35)');
+        grad.addColorStop(0.5, 'rgba(255, 140, 0, 0.15)');
+        grad.addColorStop(1, 'rgba(255, 140, 0, 0.02)');
+        jiroCtx.fillStyle = grad;
+        jiroCtx.fillRect(110, laneTop, rectWidth - 110, laneHeight);
+    }
+    
+    // レーン枠線
+    jiroCtx.strokeStyle = 'rgba(255,255,255,0.15)';
+    jiroCtx.lineWidth = 2;
+    jiroCtx.strokeRect(0, laneTop, rectWidth, laneHeight);
+
+    // 2. 判定枠（判定円）の常時描画 (中心 X = 175)
+    jiroCtx.beginPath();
+    jiroCtx.arc(HIT_POSITION_X, baseCenterY, 22.5, 0, Math.PI * 2);
+    jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    jiroCtx.lineWidth = 2;
+    jiroCtx.stroke();
+    
+    jiroCtx.beginPath();
+    jiroCtx.arc(HIT_POSITION_X, baseCenterY, 15, 0, Math.PI * 2);
+    jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    jiroCtx.lineWidth = 1.5;
+    jiroCtx.stroke();
+
+    // 3. レーン進行要素（小節線、ノーツ）の描画
+    let activeRollNote = null;
+    let notesWithState = currentChartData.notes.map((note, index) => ({ note, index }));
+    notesWithState.sort((a, b) => {
+        const isABarline = a.note.type === 'BARLINE', isBBarline = b.note.type === 'BARLINE';
+        if (isABarline && !isBBarline) return -1;
+        if (!isABarline && isBBarline) return 1;
+        if (isABarline && isBBarline) return b.note.time - a.note.time;
+        if (a.note.time !== b.note.time) return b.note.time - a.note.time;
+        return b.index - a.index;
+    });
+
+    for (const { note } of notesWithState) {
+        if (chartCoolDownUntil !== null && note.time < chartCoolDownUntil && note.type !== 'BARLINE') {
+            if (note.type >= '5' && note.type <= '7' && note.endTime > elapsedTime) { }
+            else { continue; }
+        }
+        const { bpm, scroll } = note;
+        const pixelsPerSecondX = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
+        const timeDiff = note.time - elapsedTime;
+        const x = HIT_POSITION_X + timeDiff * pixelsPerSecondX;
+
+        if (note.type === 'BARLINE') {
+            if (!note.barlineVisible || (x < -canvasMargin || x > rectWidth + canvasMargin) || pixelsPerSecondX === 0) continue;
+            
+            // 正しいY座標での小節線描画
+            jiroCtx.beginPath();
+            jiroCtx.moveTo(x, laneTop);
+            jiroCtx.lineTo(x, laneTop + laneHeight);
+            jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            jiroCtx.lineWidth = 2;
+            jiroCtx.stroke();
+
+            // 正しい小節番号の表示位置
+            const barIndex = currentChartData.barlineTimes.indexOf(note.time) + 1;
+            if (barIndex > 0) {
+                jiroCtx.fillStyle = '#ffffff';
+                jiroCtx.font = '10px monospace';
+                jiroCtx.textAlign = 'center';
+                jiroCtx.fillText(barIndex.toString(), x, laneTop - 4);
+            }
+        } else if (note.type >= '1' && note.type <= '4') {
+            if (note.judgeResult === 'hit' || (x < -canvasMargin || x > rectWidth + canvasMargin)) continue;
+            drawJiroPremiumNote(jiroCtx, x, baseCenterY, note.type);
+        } else if (note.type === '5' || note.type === '6') {
+            const pixelsPerSecondX_End = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
+            const endTimeDiff = note.endTime - elapsedTime;
+            const endX = HIT_POSITION_X + endTimeDiff * pixelsPerSecondX_End;
+            if ((x < -canvasMargin && endX < -canvasMargin) || (x > rectWidth + canvasMargin && endX > rectWidth + canvasMargin)) continue;
+            
+            if (elapsedTime >= note.time && elapsedTime <= note.endTime) activeRollNote = note;
+            
+            const isBig = (note.type === '6');
+            const size = isBig ? 21 : 14;
+            const color = NOTE_COLORS[note.type];
+            
+            // ドット絵に統一した美しいフチ付き連打ノーツの連結描画
+            // 1. 黒フチ胴体
+            jiroCtx.beginPath();
+            jiroCtx.moveTo(x, baseCenterY);
+            jiroCtx.lineTo(endX, baseCenterY);
+            jiroCtx.strokeStyle = '#000000';
+            jiroCtx.lineWidth = size * 2;
+            jiroCtx.lineCap = 'round';
+            jiroCtx.stroke();
+            
+            // 2. 白フチ胴体
+            jiroCtx.beginPath();
+            jiroCtx.moveTo(x, baseCenterY);
+            jiroCtx.lineTo(endX, baseCenterY);
+            jiroCtx.strokeStyle = '#FFFFFF';
+            jiroCtx.lineWidth = (size - 1.5) * 2;
+            jiroCtx.stroke();
+            
+            // 3. 黄色中身胴体
+            jiroCtx.beginPath();
+            jiroCtx.moveTo(x, baseCenterY);
+            jiroCtx.lineTo(endX, baseCenterY);
+            jiroCtx.strokeStyle = color;
+            jiroCtx.lineWidth = (size - 3) * 2;
+            jiroCtx.stroke();
+            jiroCtx.lineCap = 'butt'; // lineCapをデフォルトに戻す
+        } else if (note.type === '7') {
+            if (note.judgeResult === 'hit' || note.judgeResult === 'miss') continue;
+            const pixelsPerSecondX_End = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
+            const endTimeDiff = note.endTime - elapsedTime;
+            const endX = HIT_POSITION_X + endTimeDiff * pixelsPerSecondX_End;
+            let displayX = x, stayAtHitPos = false;
+            if (note.judgeResult === 'pending') {
+                if (elapsedTime <= note.endTime) {
+                    if (pixelsPerSecondX > 0) {
+                        if (x <= HIT_POSITION_X && endX > HIT_POSITION_X) stayAtHitPos = true;
+                    } else if (pixelsPerSecondX < 0) {
+                        if (x >= HIT_POSITION_X && endX < HIT_POSITION_X) stayAtHitPos = true;
+                    }
+                    if (stayAtHitPos) {
+                        displayX = HIT_POSITION_X;
+                    }
+                    activeRollNote = note;
+                } else {
+                    displayX = endX;
+                }
+            }
+            if (displayX > rectWidth + canvasMargin || displayX < -canvasMargin) continue;
+            
+            // ドット絵に統一した美しいフチ付き風船ノーツ
+            drawJiroPremiumNote(jiroCtx, displayX, baseCenterY, note.type);
+            
+            const remainingHits = note.hits - note.currentHits;
+            jiroCtx.fillStyle = 'white';
+            jiroCtx.font = 'bold 18px Inter';
+            jiroCtx.textAlign = 'center';
+            jiroCtx.textBaseline = 'middle';
+            if (note.hits > 0 && note.judgeResult === 'pending') jiroCtx.fillText(remainingHits.toString(), displayX, baseCenterY);
+        }
+    }
+
+    // 4. 太鼓本体グラフィックの描画 (左端 X = 0 ~ 110)
+    // 背景隠し
+    jiroCtx.fillStyle = '#1a1a1a';
+    jiroCtx.fillRect(0, 0, 110, rectHeight);
+    
+    // セパレータ線
+    jiroCtx.strokeStyle = '#222';
+    jiroCtx.lineWidth = 3;
+    jiroCtx.beginPath();
+    jiroCtx.moveTo(110, 0);
+    jiroCtx.lineTo(110, rectHeight);
+    jiroCtx.stroke();
+
+    const taikoX = 55;
+    const taikoY = baseCenterY;
+    const taikoR = 40;
+
+    // フチの点灯処理判定（演奏時間軸に連動）
+    const isKaLit = (elapsedTime - lastKaHitTime >= 0 && elapsedTime - lastKaHitTime < 0.12);
+    jiroCtx.fillStyle = isKaLit ? '#55ccff' : '#2255cc';
+    jiroCtx.beginPath();
+    jiroCtx.arc(taikoX, taikoY, taikoR, 0, Math.PI * 2);
+    jiroCtx.fill();
+
+    // 面の点灯処理判定（演奏時間軸に連動）
+    const isDonLit = (elapsedTime - lastDonHitTime >= 0 && elapsedTime - lastDonHitTime < 0.12);
+    jiroCtx.fillStyle = isDonLit ? '#ff5555' : '#cc2222';
+    jiroCtx.beginPath();
+    jiroCtx.arc(taikoX, taikoY, taikoR - 10, 0, Math.PI * 2);
+    jiroCtx.fill();
+
+    // 5. ヒットエフェクトの描画 (判定枠 X=175 にぴったり一致、演奏時間軸に完全連動)
+    const donLitDuration = elapsedTime - lastDonHitTime;
+    if (donLitDuration >= 0 && donLitDuration < 0.15) {
+        const opacity = (1 - donLitDuration / 0.15).toFixed(2);
+        const grad = jiroCtx.createRadialGradient(HIT_POSITION_X, baseCenterY, 5, HIT_POSITION_X, baseCenterY, 35);
+        grad.addColorStop(0, `rgba(244, 67, 54, ${opacity})`);
+        grad.addColorStop(1, 'rgba(244, 67, 54, 0)');
+        jiroCtx.fillStyle = grad;
+        jiroCtx.beginPath();
+        jiroCtx.arc(HIT_POSITION_X, baseCenterY, 35, 0, Math.PI * 2);
+        jiroCtx.fill();
+    }
+
+    const kaLitDuration = elapsedTime - lastKaHitTime;
+    if (kaLitDuration >= 0 && kaLitDuration < 0.15) {
+        const opacity = (1 - kaLitDuration / 0.15).toFixed(2);
+        jiroCtx.strokeStyle = `rgba(33, 150, 243, ${opacity})`;
+        jiroCtx.lineWidth = 10;
+        jiroCtx.beginPath();
+        jiroCtx.arc(HIT_POSITION_X, baseCenterY, 32, 0, Math.PI * 2);
+        jiroCtx.stroke();
+    }
+
+    // 6. 太鼓さん次郎仕様のコンボ表示の描画 (レーンを隠さず、叩くビジュアルを邪魔しない下部にアニメーション付き配置)
+    if (comboBounceScale > 1.0) {
+        comboBounceScale -= 0.05; // ポップアップ弾み減衰
+    } else {
+        comboBounceScale = 1.0;
+    }
+    
+    if (currentCombo >= 10) {
+        jiroCtx.save();
+        jiroCtx.fillStyle = '#ffffff';
+        jiroCtx.font = `bold ${Math.floor(20 * comboBounceScale)}px "Hiragino Kaku Gothic ProN", Meiryo, sans-serif`;
+        jiroCtx.textAlign = 'center';
+        jiroCtx.textBaseline = 'middle';
+        jiroCtx.strokeStyle = '#000000';
+        jiroCtx.lineWidth = 4;
+        
+        const comboX = 55;
+        const comboY = rectHeight - 16; // 太鼓本体の下部
+        
+        jiroCtx.strokeText(`${currentCombo}`, comboX, comboY);
+        jiroCtx.fillText(`${currentCombo}`, comboX, comboY);
+        
+        jiroCtx.font = 'bold 8px sans-serif';
+        jiroCtx.strokeText('COMBO', comboX, comboY + 10);
+        jiroCtx.fillText('COMBO', comboX, comboY + 10);
+        jiroCtx.restore();
+    }
+
+    // 連打（風船含む）カウント表示の同期
+    const rollDisplay = u('#jiro-roll-display').first();
+    if (rollDisplay) {
+        if (activeRollNote && activeRollNote.type !== '7') {
+            rollDisplay.textContent = activeRollNote.currentHits;
+            rollDisplay.style.opacity = 1;
+            if (activeRollNote.type === '6') rollDisplay.style.color = NOTE_COLORS['6'];
+            else rollDisplay.style.color = NOTE_COLORS['5'];
+        } else {
+            rollDisplay.style.opacity = 0;
+        }
+    }
 }
 
 function setChartTime(time) {
@@ -1445,11 +2112,6 @@ function setChartTime(time) {
         }
     });
     currentCombo = initialCombo;
-
-    // シーク時の不要なエフェクト状態やタイムスタンプの完全初期化
-    lastDonHitTime = 0;
-    lastKaHitTime = 0;
-
     updateComboDisplay();
     updateMeasureDisplay();
     seekChartState(currentElapsedTime);
@@ -1470,343 +2132,11 @@ function setChartTime(time) {
     }
 }
 
-
-/** 6. Canvas初期化・描画・プレビューアニメーション関数群 **/
-
-function drawPreciseJiroNote(ctx, x, y, size, noteType) {
-    const color = NOTE_COLORS[noteType];
-    const isLarge = (noteType === '3' || noteType === '4' || noteType === '6' || noteType === '7');
-    const borderWhiteOffset = isLarge ? 1.5 : 1;
-    const borderInnerOffset = isLarge ? 3.5 : 2.5;
-
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, Math.PI * 2);
-    ctx.fillStyle = '#000000';
-    ctx.fill();
-    
-    ctx.beginPath();
-    ctx.arc(x, y, size - borderWhiteOffset, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
-    
-    ctx.beginPath();
-    ctx.arc(x, y, size - borderInnerOffset, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-}
-
-function updateJiroPreview(time = currentElapsedTime) {
-    if (!currentChartData) {
-        jiroCtx.clearRect(0, 0, jiroCanvas.width, jiroCanvas.height);
-        seekChartState(0);
-        return;
-    }
-    
-    // チラつきと消えるバグを解消するため毎フレームのバッファリセットはせず、論理サイズを算出
-    const rectWidth = jiroCanvas.width / (window.devicePixelRatio || 1);
-    const rectHeight = jiroCanvas.height / (window.devicePixelRatio || 1);
-    
-    seekChartState(time);
-    const elapsedTime = time;
-    const baseCenterY = rectHeight / 2; // 上下中央（55px）
-    const canvasMargin = 100;
-    jiroCtx.clearRect(0, 0, rectWidth, rectHeight);
-    
-    // 1. レーンの背景（ゴーゴータイム対応 & 高さを54pxに拡大）
-    const laneHeight = 54;
-    const laneTop = baseCenterY - (laneHeight / 2);
-    
-    jiroCtx.fillStyle = '#333333';
-    jiroCtx.fillRect(0, laneTop, rectWidth, laneHeight);
-    
-    // 薄く見やすいゴーゴータイム背景 (太鼓より右から右端へのグラデーション)
-    if (state_isGogo) {
-        const gogoGrad = jiroCtx.createLinearGradient(110, laneTop, rectWidth, laneTop);
-        gogoGrad.addColorStop(0, 'rgba(255, 69, 0, 0.45)');
-        gogoGrad.addColorStop(0.3, 'rgba(255, 120, 0, 0.25)');
-        gogoGrad.addColorStop(1, 'rgba(255, 120, 0, 0.0)');
-        jiroCtx.fillStyle = gogoGrad;
-        jiroCtx.fillRect(110, laneTop, rectWidth - 110, laneHeight);
-    }
-    
-    // レーン枠線
-    jiroCtx.strokeStyle = 'rgba(255,255,255,0.15)';
-    jiroCtx.lineWidth = 2;
-    jiroCtx.strokeRect(0, laneTop, rectWidth, laneHeight);
-
-    // 2. 判定枠（判定円）の常時描画
-    jiroCtx.beginPath();
-    jiroCtx.arc(HIT_POSITION_X, baseCenterY, 22.5, 0, Math.PI * 2);
-    jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-    jiroCtx.lineWidth = 2;
-    jiroCtx.stroke();
-    
-    jiroCtx.beginPath();
-    jiroCtx.arc(HIT_POSITION_X, baseCenterY, 15, 0, Math.PI * 2);
-    jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-    jiroCtx.lineWidth = 1.5;
-    jiroCtx.stroke();
-
-    // 3. レーン進行要素（小節線、ノーツ）の描画
-    let activeRollNote = null;
-
-    // パース時点で分類・ソートされたキャッシュから高速描画（毎フレームの配列 map/sort 破棄を撤廃）
-    const barlines = currentChartData.barlines || [];
-    const hitNotes = currentChartData.hitNotes || [];
-
-    // 小節線の描画（画面内ノーツのみ処理する高速スキップ & break 制御）
-    for (let i = 0; i < barlines.length; i++) {
-        const note = barlines[i];
-        const bpm = note.bpm;
-        const scroll = note.scroll;
-        const pixelsPerSecondX = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
-        const timeDiff = note.time - elapsedTime;
-        const x = HIT_POSITION_X + timeDiff * pixelsPerSecondX;
-
-        if (x < -canvasMargin) continue;
-        if (x > rectWidth + canvasMargin) break; // ソートされているため、これ以降は確実に画面外
-
-        if (!note.barlineVisible || pixelsPerSecondX === 0) continue;
-        
-        // 小節線描画
-        jiroCtx.beginPath();
-        jiroCtx.moveTo(x, laneTop);
-        jiroCtx.lineTo(x, laneTop + laneHeight);
-        jiroCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-        jiroCtx.lineWidth = 2;
-        jiroCtx.stroke();
-
-        // 正しい小節番号の表示位置
-        const barIndex = currentChartData.barlineTimes.indexOf(note.time) + 1;
-        if (barIndex > 0) {
-            jiroCtx.fillStyle = '#ffffff';
-            jiroCtx.font = '10px monospace';
-            jiroCtx.textAlign = 'center';
-            jiroCtx.fillText(barIndex.toString(), x, laneTop - 4);
-        }
-    }
-
-    // 音符ノーツの描画（画面内ノーツのみ処理する高速スキップ & break 制御）
-    for (let i = 0; i < hitNotes.length; i++) {
-        const note = hitNotes[i];
-        
-        if (chartCoolDownUntil !== null && note.time < chartCoolDownUntil) {
-            if (note.type >= '5' && note.type <= '7' && note.endTime > elapsedTime) { }
-            else { continue; }
-        }
-
-        const bpm = note.bpm;
-        const scroll = note.scroll;
-        const pixelsPerSecondX = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
-        const timeDiff = note.time - elapsedTime;
-        const x = HIT_POSITION_X + timeDiff * pixelsPerSecondX;
-
-        // 画面外判定
-        if (note.type === '5' || note.type === '6' || note.type === '7') {
-            const endTimeDiff = note.endTime - elapsedTime;
-            const endX = HIT_POSITION_X + endTimeDiff * pixelsPerSecondX;
-            if (x < -canvasMargin && endX < -canvasMargin) continue;
-            if (x > rectWidth + canvasMargin && endX > rectWidth + canvasMargin) break; // ソートされているため break 終了可能
-        } else {
-            if (x < -canvasMargin) continue;
-            if (x > rectWidth + canvasMargin) break; // 音符は time 順ソートされているため break 終了可能
-        }
-
-        if (note.type >= '1' && note.type <= '4') {
-            if (note.judgeResult === 'hit') continue;
-            const size = NOTE_SIZE[note.type];
-            drawPreciseJiroNote(jiroCtx, x, baseCenterY, size, note.type);
-        } else if (note.type === '5' || note.type === '6') {
-            const pixelsPerSecondX_End = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
-            const endTimeDiff = note.endTime - elapsedTime;
-            const endX = HIT_POSITION_X + endTimeDiff * pixelsPerSecondX_End;
-            
-            if (elapsedTime >= note.time && elapsedTime <= note.endTime) activeRollNote = note;
-            
-            const size = NOTE_SIZE[note.type];
-            const color = '#fe4'; // 譜面画像の連打色と統一
-
-            jiroCtx.lineCap = 'round';
-            
-            jiroCtx.strokeStyle = '#000000';
-            jiroCtx.lineWidth = size * 2;
-            jiroCtx.beginPath();
-            jiroCtx.moveTo(x, baseCenterY);
-            jiroCtx.lineTo(endX, baseCenterY);
-            jiroCtx.stroke();
-            
-            jiroCtx.strokeStyle = '#ffffff';
-            jiroCtx.lineWidth = size * 2 - 2;
-            jiroCtx.beginPath();
-            jiroCtx.moveTo(x, baseCenterY);
-            jiroCtx.lineTo(endX, baseCenterY);
-            jiroCtx.stroke();
-            
-            jiroCtx.strokeStyle = color;
-            jiroCtx.lineWidth = size * 2 - 5;
-            jiroCtx.beginPath();
-            jiroCtx.moveTo(x, baseCenterY);
-            jiroCtx.lineTo(endX, baseCenterY);
-            jiroCtx.stroke();
-            
-            jiroCtx.lineCap = 'butt';
-            
-            // 始点と終点の三重装飾
-            drawPreciseJiroNote(jiroCtx, x, baseCenterY, size, note.type);
-            drawPreciseJiroNote(jiroCtx, endX, baseCenterY, size, note.type);
-        } else if (note.type === '7') {
-            if (note.judgeResult === 'hit' || note.judgeResult === 'miss') continue;
-            const pixelsPerSecondX_End = BASE_SCROLL_FACTOR * bpm * scroll * scrollMultiplier;
-            const endTimeDiff = note.endTime - elapsedTime;
-            const endX = HIT_POSITION_X + endTimeDiff * pixelsPerSecondX_End;
-            let displayX = x, stayAtHitPos = false;
-            if (note.judgeResult === 'pending') {
-                if (elapsedTime <= note.endTime) {
-                    if (pixelsPerSecondX > 0) {
-                        if (x <= HIT_POSITION_X && endX > HIT_POSITION_X) stayAtHitPos = true;
-                    } else if (pixelsPerSecondX < 0) {
-                        if (x >= HIT_POSITION_X && endX < HIT_POSITION_X) stayAtHitPos = true;
-                    }
-                    if (stayAtHitPos) {
-                        displayX = HIT_POSITION_X;
-                    }
-                    activeRollNote = note;
-                } else {
-                    displayX = endX;
-                }
-            }
-            if (displayX > rectWidth + canvasMargin || displayX < -canvasMargin) continue;
-            const size = NOTE_SIZE[note.type];
-            const color = '#fb4'; // 譜面画像の風船色
-            
-            jiroCtx.beginPath();
-            jiroCtx.arc(displayX, baseCenterY, size, 0, Math.PI * 2);
-            jiroCtx.fillStyle = '#000000';
-            jiroCtx.fill();
-            
-            jiroCtx.beginPath();
-            jiroCtx.arc(displayX, baseCenterY, size - 1.5, 0, Math.PI * 2);
-            jiroCtx.fillStyle = '#ffffff';
-            jiroCtx.fill();
-            
-            jiroCtx.beginPath();
-            jiroCtx.arc(displayX, baseCenterY, size - 3.5, 0, Math.PI * 2);
-            jiroCtx.fillStyle = color;
-            jiroCtx.fill();
-            
-            const remainingHits = note.hits - note.currentHits;
-            jiroCtx.fillStyle = 'black';
-            jiroCtx.font = 'bold 15px monospace';
-            jiroCtx.textAlign = 'center';
-            jiroCtx.textBaseline = 'middle';
-            if (note.hits > 0 && note.judgeResult === 'pending') {
-                jiroCtx.fillText(remainingHits.toString(), displayX, baseCenterY);
-            }
-        }
-    }
-
-    // 4. 太鼓本体グラフィックの描画 (左端 X = 0 ~ 110)
-    jiroCtx.fillStyle = '#1a1a1a';
-    jiroCtx.fillRect(0, 0, 110, rectHeight);
-    
-    // セパレータ線
-    jiroCtx.strokeStyle = '#222';
-    jiroCtx.lineWidth = 3;
-    jiroCtx.beginPath();
-    jiroCtx.moveTo(110, 0);
-    jiroCtx.lineTo(110, rectHeight);
-    jiroCtx.stroke();
-
-    const taikoX = 55;
-    const taikoY = baseCenterY;
-    const taikoR = 40;
-
-    // フチの点灯
-    const isKaLit = (performance.now() - lastKaHitTime < 100);
-    jiroCtx.fillStyle = isKaLit ? '#55ccff' : '#2255cc';
-    jiroCtx.beginPath();
-    jiroCtx.arc(taikoX, taikoY, taikoR, 0, Math.PI * 2);
-    jiroCtx.fill();
-
-    // 面の点灯
-    const isDonLit = (performance.now() - lastDonHitTime < 100);
-    jiroCtx.fillStyle = isDonLit ? '#ff5555' : '#cc2222';
-    jiroCtx.beginPath();
-    jiroCtx.arc(taikoX, taikoY, taikoR - 10, 0, Math.PI * 2);
-    jiroCtx.fill();
-
-    // 5. ヒットエフェクトの描画 (判定枠 X=175 に完全に一致)
-    const donLitDuration = performance.now() - lastDonHitTime;
-    if (donLitDuration < 150) {
-        const opacity = (1 - donLitDuration / 150).toFixed(2);
-        const grad = jiroCtx.createRadialGradient(HIT_POSITION_X, baseCenterY, 5, HIT_POSITION_X, baseCenterY, 35);
-        grad.addColorStop(0, `rgba(244, 67, 54, ${opacity})`);
-        grad.addColorStop(1, 'rgba(244, 67, 54, 0)');
-        jiroCtx.fillStyle = grad;
-        jiroCtx.beginPath();
-        jiroCtx.arc(HIT_POSITION_X, baseCenterY, 35, 0, Math.PI * 2);
-        jiroCtx.fill();
-    }
-
-    const kaLitDuration = performance.now() - lastKaHitTime;
-    if (kaLitDuration < 150) {
-        const opacity = (1 - kaLitDuration / 150).toFixed(2);
-        jiroCtx.strokeStyle = `rgba(33, 150, 243, ${opacity})`;
-        jiroCtx.lineWidth = 10;
-        jiroCtx.beginPath();
-        jiroCtx.arc(HIT_POSITION_X, baseCenterY, 32, 0, Math.PI * 2);
-        jiroCtx.stroke();
-    }
-
-    // 6. 太鼓さん次郎風の連打・風船カウント表示の同期 (変更検知でDOM更新負荷を徹底防止)
-    const rollDisplay = cacheJiroRollDisplay;
-    if (rollDisplay) {
-        if (activeRollNote && activeRollNote.type !== '7') {
-            const nextRollText = activeRollNote.currentHits.toString();
-            const nextRollColor = (activeRollNote.type === '6') ? '#ffcc00' : '#ffff00';
-            if (prevRollText !== nextRollText || prevRollOpacity !== 1) {
-                rollDisplay.textContent = nextRollText;
-                rollDisplay.style.color = nextRollColor;
-                rollDisplay.style.opacity = "1";
-                prevRollText = nextRollText;
-                prevRollOpacity = 1;
-            }
-        } else {
-            if (prevRollOpacity !== 0) {
-                rollDisplay.style.opacity = "0";
-                prevRollOpacity = 0;
-            }
-        }
-    }
-
-    // 7. 見やすい高品位コンボ表示 (太鼓と判定円の間: X=135)
-    if (currentCombo >= 10) {
-        jiroCtx.textAlign = 'center';
-        jiroCtx.textBaseline = 'middle';
-        
-        // コンボ数値
-        jiroCtx.font = 'bold 22px "Inter", "sans-serif"';
-        jiroCtx.strokeStyle = '#000000';
-        jiroCtx.lineWidth = 4.5;
-        jiroCtx.strokeText(currentCombo.toString(), 135, baseCenterY - 6);
-        jiroCtx.fillStyle = (currentCombo >= 100) ? '#ffcc00' : '#ffffff';
-        jiroCtx.fillText(currentCombo.toString(), 135, baseCenterY - 6);
-        
-        // COMBO ラベル
-        jiroCtx.font = 'bold 8px "Inter", "sans-serif"';
-        jiroCtx.strokeStyle = '#000000';
-        jiroCtx.lineWidth = 2.5;
-        jiroCtx.strokeText('COMBO', 135, baseCenterY + 12);
-        jiroCtx.fillStyle = '#ffffff';
-        jiroCtx.fillText('COMBO', 135, baseCenterY + 12);
-    }
-}
-
-function startSimulation() {
+async function startSimulation() {
     if (isPlaying || !currentChartData) return;
     initializeAudio();
     if (audioContext && audioContext.state === 'suspended') {
-        audioContext.resume().catch(err => console.warn("Failed to resume AudioContext", err));
+        await audioContext.resume();
     }
 
     isPlaying = true;
@@ -1840,10 +2170,6 @@ function startSimulation() {
     lastAutoEffectTime = 0;
     lastFrameTime = performance.now();
     
-    // メモリリーク対策: 既存のインターバルやフレームループが二重起動しないよう完全にクリーンアップしたことを保証
-    if (logicIntervalId) { clearInterval(logicIntervalId); logicIntervalId = null; }
-    if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
-
     logicIntervalId = setInterval(updateLogic, 1000 / 240);
     animationFrameId = requestAnimationFrame(drawLoop);
 }
@@ -1897,71 +2223,28 @@ function seekToMeasure(direction) {
     setChartTime(currentChartData.allMeasureTimes[newMeasureIndex]);
 }
 
-// ◀ 前 / 次 ▶ ボタンの小節スライド処理
-function stepMeasure(direction) {
-    if (!currentChartData || currentChartData.allMeasureTimes.length === 0) return;
-    
-    // 現在時間から一番近い小節インデックスを検索
-    let curIdx = 0;
-    let minDiff = Math.abs(currentElapsedTime - currentChartData.allMeasureTimes[0]);
-    for (let i = 1; i < currentChartData.allMeasureTimes.length; i++) {
-        const diff = Math.abs(currentElapsedTime - currentChartData.allMeasureTimes[i]);
-        if (diff < minDiff) {
-            minDiff = diff;
-            curIdx = i;
-        }
-    }
-    
-    let targetIdx = curIdx + direction;
-    if (targetIdx < 0) targetIdx = 0;
-    if (targetIdx >= currentChartData.allMeasureTimes.length) targetIdx = currentChartData.allMeasureTimes.length - 1;
-    
-    setChartTime(currentChartData.allMeasureTimes[targetIdx]);
-}
-
 function playSE(type) {
     if (performance.now() - lastSEPlayTime[type] < 1000 / renderFPS) return;
     if (!audioContext || !audioBuffers[type] || !seGainNode) return;
     const source = audioContext.createBufferSource();
     source.buffer = audioBuffers[type];
     source.connect(seGainNode);
-    
-    // メモリリーク（SEノードの永久蓄積）を完全に防ぐクリーンアップ・解放ハンドラ
-    source.onended = () => {
-        source.disconnect();
-    };
-
     source.start(0);
     lastSEPlayTime[type] = performance.now();
 }
 
 function updateComboDisplay() {
-    // Canvas内での太鼓さん次郎風COMBO表示と一体化したため、ここでは空実装
+    // プレイヤーのコンボ表示は不要なため空実装
 }
 
 function updateMeasureDisplay() {
-    const measureDisplay = cacheJiroMeasureDisplay;
-    if (!measureDisplay) return;
-
     if (!currentChartData || !currentChartData.allMeasureTimes) {
-        if (prevPassedBarlines !== 0 || prevTotalBarlines !== 0) {
-            measureDisplay.textContent = '経過: 0 / 0';
-            prevPassedBarlines = 0;
-            prevTotalBarlines = 0;
-        }
+        u('#jiro-measure-display').text('');
         return;
     }
-    
-    // これまで通過した小節線数（経過小節数）をリアルタイムで算出（高速フィルタ）
-    const passedBarlines = currentChartData.barlines.filter(t => t.time <= currentElapsedTime).length;
-    const totalBarlines = currentChartData.barlines.length;
-    
-    // 状態変更検知時のみDOMテキストを変更し、スマートフォンの激しいReflow負荷を抑制
-    if (passedBarlines !== prevPassedBarlines || totalBarlines !== prevTotalBarlines) {
-        measureDisplay.textContent = `小節: ${passedBarlines} / ${totalBarlines}`;
-        prevPassedBarlines = passedBarlines;
-        prevTotalBarlines = totalBarlines;
-    }
+    const currentMeasure = currentMeasureIndex;
+    const totalMeasures = currentChartData.allMeasureTimes.length - 1;
+    u('#jiro-measure-display').text(`小節: ${currentMeasure} / ${totalMeasures}`);
 }
 
 function autoHitCheck(elapsedTime) {
@@ -1988,9 +2271,9 @@ function autoHitCheck(elapsedTime) {
                     playSE(noteHitType);
                     
                     if (noteHitType === 'don') {
-                        lastDonHitTime = performance.now();
+                        lastDonHitTime = elapsedTime;
                     } else {
-                        lastKaHitTime = performance.now();
+                        lastKaHitTime = elapsedTime;
                     }
 
                     if (note.type === '7' && note.hits > 0 && note.currentHits >= note.hits) {
@@ -2009,12 +2292,13 @@ function autoHitCheck(elapsedTime) {
                 if (!skipEffect) lastAutoEffectTime = elapsedTime;
                 if (note.type === '1' || note.type === '3') {
                     playSE('don');
-                    lastDonHitTime = performance.now();
+                    lastDonHitTime = elapsedTime;
                 } else if (note.type === '2' || note.type === '4') {
                     playSE('ka');
-                    lastKaHitTime = performance.now();
+                    lastKaHitTime = elapsedTime;
                 }
                 currentCombo++;
+                comboBounceScale = 1.35; // コンボを叩いたポップアップ弾み起動
             } else if (elapsedTime > note.time + JUDGE_BAD) {
                 note.judgeResult = 'miss';
                 currentCombo = 0;
@@ -2063,23 +2347,23 @@ function updateLogic() {
     updateJiroUIElements();
 }
 
+// スマートフォン軽量化のためのUI更新レート制限 (100ms周期)
+let lastUIUpdateTime = 0;
 function updateJiroUIElements() {
+    const now = performance.now();
+    if (now - lastUIUpdateTime < 100) return; 
+    lastUIUpdateTime = now;
+    
     const totalDuration = currentChartData ? currentChartData.endTime : 0;
+    u('#jiro-time-display').text(`${currentElapsedTime.toFixed(2)} / ${totalDuration.toFixed(2)}s`);
     
-    // 変更検知による表示時間の最適化
-    const nextTimeText = `${currentElapsedTime.toFixed(2)} / ${totalDuration.toFixed(2)}s`;
-    if (prevTimeText !== nextTimeText && cacheJiroTimeDisplay) {
-        cacheJiroTimeDisplay.textContent = nextTimeText;
-        prevTimeText = nextTimeText;
-    }
-    
-    // 変更検知によるシークバーの最適化
-    if (cacheJiroSeekbar && totalDuration > 0) {
-        const nextSeekbarVal = Math.round((currentElapsedTime / totalDuration) * 1000);
-        if (prevSeekbarValue !== nextSeekbarVal) {
-            cacheJiroSeekbar.value = nextSeekbarVal;
-            prevSeekbarValue = nextSeekbarVal;
-        }
+    // 現在の通過小節番号のリアルタイム計測と表示連動
+    currentMeasureIndex = findMeasureIndex(currentElapsedTime);
+    updateMeasureDisplay();
+
+    const seekbar = u('#jiro-seekbar').first();
+    if (seekbar && totalDuration > 0 && document.activeElement !== seekbar) {
+        seekbar.value = (currentElapsedTime / totalDuration) * 1000;
     }
 }
 
@@ -2093,14 +2377,34 @@ function drawLoop(timestamp) {
     updateJiroPreview(currentElapsedTime);
 }
 
-
-/** 7. イベントバインディング・自動ロード（初期化順序の整合化） **/
-
 // プレビュー操作バインディング
 u('#jiro-btn-play').on('click', togglePlay);
 u('#jiro-btn-stop').on('click', resetSimulation);
-u('#jiro-btn-prev').on('click', () => stepMeasure(-1));
-u('#jiro-btn-next').on('click', () => stepMeasure(1));
+
+// 小節送りボタンのクリックイベント定義
+u('#jiro-btn-prev').on('click', () => {
+    if (!currentChartData) return;
+    const curIndex = findMeasureIndex(currentElapsedTime);
+    let targetIndex = curIndex;
+    
+    // 現在の演奏時間が既に小節頭にきわめて近い場合はさらに一つ前の小節へ
+    if (curIndex > 0 && Math.abs(currentElapsedTime - currentChartData.allMeasureTimes[curIndex]) < 0.1) {
+        targetIndex = curIndex - 1;
+    }
+    
+    const targetTime = currentChartData.allMeasureTimes[targetIndex];
+    setChartTime(targetTime);
+});
+
+u('#jiro-btn-next').on('click', () => {
+    if (!currentChartData) return;
+    const curIndex = findMeasureIndex(currentElapsedTime);
+    const totalMeasures = currentChartData.allMeasureTimes.length - 1;
+    const targetIndex = Math.min(totalMeasures, curIndex + 1);
+    
+    const targetTime = currentChartData.allMeasureTimes[targetIndex];
+    setChartTime(targetTime);
+});
 
 u('#jiro-vol-music').on('input', (e) => {
     musicVolume = parseFloat(e.target.value) / 100;
@@ -2111,19 +2415,24 @@ u('#jiro-vol-se').on('input', (e) => {
     if (seGainNode) seGainNode.gain.value = seVolume;
 });
 
-// シークバーの小節頭スナップ
+// シークバーの操作時に、ドラッグ中はリアルタイム時間表示のみ更新
 u('#jiro-seekbar').on('input', (e) => {
-    if (!currentChartData || currentChartData.allMeasureTimes.length === 0) return;
-    const totalDuration = currentChartData.endTime || 1.0;
-    const inputRatio = parseFloat(e.target.value) / 1000;
-    const targetTimeRaw = inputRatio * totalDuration;
+    if (!currentChartData) return;
+    const ratio = parseFloat(e.target.value) / 1000;
+    const time = ratio * currentChartData.endTime;
+    u('#jiro-time-display').text(`${time.toFixed(2)} / ${currentChartData.endTime.toFixed(2)}s`);
+});
+
+// ドラッグを離した(change)タイミングで、最も近い小節頭へスナップして再生再開
+u('#jiro-seekbar').on('change', (e) => {
+    if (!currentChartData) return;
+    const ratio = parseFloat(e.target.value) / 1000;
+    const targetTime = ratio * currentChartData.endTime;
     
-    // 最も近い小節線の時間を探索してスナップさせる
-    let closestTime = currentChartData.allMeasureTimes[0];
-    let minDiff = Math.abs(targetTimeRaw - closestTime);
-    
+    let closestTime = 0;
+    let minDiff = Infinity;
     currentChartData.allMeasureTimes.forEach(t => {
-        const diff = Math.abs(targetTimeRaw - t);
+        const diff = Math.abs(t - targetTime);
         if (diff < minDiff) {
             minDiff = diff;
             closestTime = t;
@@ -2133,96 +2442,72 @@ u('#jiro-seekbar').on('input', (e) => {
     setChartTime(closestTime);
 });
 
-// 送り戻しボタンのスマホ向けタッチ長押しリピート処理
-let btnRepeatTimer = null;
-let btnRepeatDelay = null;
-
-function setupButtonRepeat(selector, direction) {
-    const btn = u(selector).first();
-    if (!btn) return;
-    
-    const startRepeat = (e) => {
-        e.preventDefault();
-        stepMeasure(direction);
-        
-        btnRepeatDelay = setTimeout(() => {
-            btnRepeatTimer = setInterval(() => {
-                stepMeasure(direction);
-            }, 100);
-        }, 250);
-    };
-    
-    const stopRepeat = () => {
-        if (btnRepeatDelay) clearTimeout(btnRepeatDelay);
-        if (btnRepeatTimer) clearInterval(btnRepeatTimer);
-        btnRepeatDelay = null;
-        btnRepeatTimer = null;
-    };
-    
-    btn.addEventListener('mousedown', startRepeat);
-    btn.addEventListener('mouseup', stopRepeat);
-    btn.addEventListener('mouseleave', stopRepeat);
-    
-    btn.addEventListener('touchstart', startRepeat, { passive: false });
-    btn.addEventListener('touchend', stopRepeat);
-    btn.addEventListener('touchcancel', stopRepeat);
-}
-
-// ◀ 前 / 次 ▶ ボタンに長押しスライドを割り当て
-setupButtonRepeat('#jiro-btn-prev', -1);
-setupButtonRepeat('#jiro-btn-next', 1);
-
-// エディタ文字色分け用のハイライトイベントハンドラ
-let debounceTimer = null;
-const processFunc = () => {
-  const val = u('.input').first().value; if(!val) return;
-  
-  updateHighlight();
-  
-  if (debounceTimer) clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    try {
-      tjaParsed = parseTJA(val);
-      if (!selectedDifficulty || !tjaParsed.courses[selectedDifficulty]) selectedDifficulty = Object.keys(tjaParsed.courses)[0];
-      
-      // 次郎風プレビュー用の前処理データを作成 (プレビュー専用の高精度パーサーを使用)
-      const parsedForPreview = parseTJAForPreview(val);
-      currentChartData = parsedForPreview.courses[selectedDifficulty] || null;
-      if (currentChartData) {
-        // TJA OFFSET の設定もここから直接取得
-        tjaParsed.headers.offset = parsedForPreview.globalConfig.OFFSET;
-        setChartTime(currentElapsedTime);
-      }
-
-      updateUI();
-      u('.errors').text('No error');
-      
-      if (errorLineNumber !== null) {
-        errorLineNumber = null;
-        updateHighlight();
-      }
-      
-      localStorage.setItem('tja_tools_autosave', val);
-    } catch(e) { 
-      u('.errors').text(e.message);
-      
-      const match = e.message.match(/(?:行|line)\s*([0-9]+)/i);
-      if (match) {
-        errorLineNumber = parseInt(match[1], 10);
-      } else {
-        errorLineNumber = null;
-      }
-      updateHighlight(); 
-    }
-  }, 150);
+// 長押しシーク処理用
+const keyState = {
+    ArrowLeft: { pressed: false, timer: null, pressStartTime: 0, currentInterval: 100 },
+    ArrowRight: { pressed: false, timer: null, pressStartTime: 0, currentInterval: 100 }
 };
+const KEY_REPEAT_DELAY = 250, KEY_REPEAT_INTERVAL_BASE = 100, KEY_SPEED_UP_TIME = 2000;
 
-u('.input').on('input', processFunc);
+// キー入力イベントの登録 (ビューア用シーク等に限定)
+window.addEventListener('keydown', (e) => {
+    if (selectedPage !== 'preview') return;
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'INPUT')) return;
+    
+    if (e.key === ' ') {
+        e.preventDefault();
+        if (e.repeat) return;
+        togglePlay();
+        return;
+    }
 
-// 自動ロード & データベース初期化（一番最後に走らせて安全性を保証）
+    if (!isPlaying && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        e.preventDefault();
+        if (!currentChartData || currentChartData.barlineTimes.length === 0) return;
+        if (e.key === 'ArrowUp') setChartTime(currentChartData.barlineTimes[currentChartData.barlineTimes.length - 1]);
+        else if (e.key === 'ArrowDown') setChartTime(currentChartData.barlineTimes[0]);
+        return;
+    }
+
+    if (keyState[e.key]) {
+        e.preventDefault();
+        if (keyState[e.key].pressed) return;
+        keyState[e.key].pressed = true;
+        keyState[e.key].pressStartTime = performance.now();
+        keyState[e.key].currentInterval = KEY_REPEAT_INTERVAL_BASE;
+        seekToMeasure(e.key === 'ArrowLeft' ? -1 : 1);
+        keyState[e.key].timer = setTimeout(() => {
+            if (keyState[e.key].timer) clearInterval(keyState[e.key].timer);
+            keyState[e.key].timer = setInterval(() => {
+                const elapsedTime = performance.now() - keyState[e.key].pressStartTime;
+                const speedUpCount = Math.floor(elapsedTime / KEY_SPEED_UP_TIME);
+                const newInterval = KEY_REPEAT_INTERVAL_BASE / Math.pow(2, speedUpCount);
+                if (newInterval !== keyState[e.key].currentInterval) {
+                    clearInterval(keyState[e.key].timer);
+                    keyState[e.key].currentInterval = newInterval;
+                    keyState[e.key].timer = setInterval(() => seekToMeasure(e.key === 'ArrowLeft' ? -1 : 1), keyState[e.key].currentInterval);
+                }
+                seekToMeasure(e.key === 'ArrowLeft' ? -1 : 1);
+            }, keyState[e.key].currentInterval);
+        }, KEY_REPEAT_DELAY);
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (keyState[e.key]) {
+        e.preventDefault();
+        keyState[e.key].pressed = false;
+        if (keyState[e.key].timer) {
+            clearInterval(keyState[e.key].timer);
+            keyState[e.key].timer = null;
+        }
+    }
+});
+
+// 自動ロード & データベース初期化
 window.addEventListener('DOMContentLoaded', async () => {
     await initDB();
-    cacheDOMElements(); // DOMキャッシュ初期化
 
     // エディタ内容の復元
     const saved = localStorage.getItem('tja_tools_autosave');
@@ -2245,15 +2530,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         console.error("Failed to load music from DB:", error);
-    }
-});
-
-// 画面リサイズ時とプレビュー初期読み込み時にCanvas論理ピクセル幅を完全同期
-window.addEventListener('resize', () => { 
-    resizeCanvas(); 
-    resizeJiroCanvas();
-    if (!isPlaying) {
-        updateUI(); 
     }
 });
 </script>
