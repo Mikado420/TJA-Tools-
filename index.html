@@ -9,11 +9,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js"></script>
   <style>
-    @font-face {
-      font-family: 'Pixel 3x5';
-      src: url(data:application/font-woff2;charset=utf-8;base64,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) format('woff2');
-    }
-    * { box-sizing: border-box; }
+    /* 1. 【ダブルタップズーム無効化】すべての画面要素でタッチアクションをマニピュレーションに固定化 */
+    * { box-sizing: border-box; touch-action: manipulation; }
     html, body {
       width: 100%;
       height: 100%;
@@ -33,32 +30,35 @@
     .area-editor { flex: 1; display: flex; flex-direction: column; padding: 4px; overscroll-behavior: contain; position: relative; }
     .editor-container { flex: 1; width: 100%; position: relative; overflow: hidden; border: 1px solid #333; background: #1e1e1e; border-radius: 4px; display: flex; }
     
-    /* 左端の行番号表示エリアをスマホ向けに極限まで省スペース化 */
+    /* 2. 【行番号エリアのズレ修正】幅を 42px に縮小してテキスト領域を極限まで拡大。4桁対応の極小カラム表示枠 */
     .editor-container .line-numbers {
       position: absolute;
       left: 0; top: 0; bottom: 0;
-      width: 28px;
+      width: 42px; 
       background: #151515;
       border-right: 1px solid #2d2d2d;
-      padding: 6px 0;
+      padding: 6px 0; /* 上下の余白をテキストパディング(6px)と完全一致 */
       overflow: hidden;
       user-select: none;
-      text-align: right;
       box-sizing: border-box;
       color: #5a5a5a;
     }
-    .editor-container .line-numbers span {
-      display: block;
-      padding-right: 3px;
-      height: 16.5px; /* エディタの1行（11px * 1.5line-height = 16.5px）に固定同期 */
-      line-height: 16.5px;
-      font-size: 9px !important;
+    /* 自動改行・折り返し時の行ズレバグを完全解消するため、行ごとの高さを動的に制御可能な行FLEXブロックに再編 */
+    .line-number-row {
+      display: flex;
+      align-items: flex-start; /* 折り返しが発生しても行番号・小節番号は必ず最上部（1行目）に綺麗に固定 */
+      justify-content: space-between;
+      padding: 0 4px;
+      width: 100%;
       box-sizing: border-box;
+      height: 18px; /* デフォルト初期高さ。自動改行時はJSがテキストエリアの実寸高さを代入して正確に伸長 */
+      overflow: hidden;
     }
     
+    /* 行の縦ズレをピクセル単位で解消するために left: 42px への同期と padding、line-heightの絶対指定を統一 */
     .editor-container .backdrop {
       position: absolute;
-      left: 28px; right: 0; top: 0; bottom: 0;
+      left: 42px; right: 0; top: 0; bottom: 0;
       padding: 6px 8px;
       margin: 0;
       border: 1px solid transparent;
@@ -71,7 +71,7 @@
     .editor-container .backdrop, .area-editor .input, .editor-container .line-numbers {
       font-family: Consolas, Menlo, "Courier New", "MS Gothic", monospace !important;
       font-size: 11px !important;
-      line-height: 1.5 !important;
+      line-height: 18px !important; /* px指定に完全統一し小数点端数ズレを完璧に防止 */
       letter-spacing: normal !important;
       word-spacing: normal !important;
       white-space: pre-wrap !important;
@@ -82,10 +82,15 @@
       margin: 0;
       padding: 0;
     }
+    /* 折り返し高さを正確に計測・同期するため、各行をdivブロック化 */
+    .highlight-row {
+      min-height: 18px;
+      box-sizing: border-box;
+    }
     .area-editor .input {
       position: absolute;
-      left: 28px; right: 0; top: 0; bottom: 0;
-      width: calc(100% - 28px);
+      left: 42px; right: 0; top: 0; bottom: 0;
+      width: calc(100% - 42px);
       height: 100%;
       resize: none;
       padding: 6px 8px;
@@ -183,7 +188,7 @@
             <canvas id="jiro-previewCanvas" class="w-full h-full absolute top-0 left-0" style="z-index: 20; pointer-events: none;"></canvas>
           </div>
 
-          <!-- 再生コントロールパネル (スマートフォン対応・小節送りボタン追加) -->
+          <!-- 再生コントロールパネル (スマートフォン対応・小節送りボタン追加・倍速機能付き) -->
           <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; color: #aaa; background: #222; padding: 8px 12px; border-radius: 4px; border: 1px solid #333; margin-top: 8px; margin-bottom: 8px;">
             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
               <button class="button" id="jiro-btn-play" style="background: #007bff; color: white; border: none; padding: 8px 14px; font-weight: bold; border-radius: 4px; font-size: 11px;">再生</button>
@@ -191,6 +196,13 @@
               <button class="button" id="jiro-btn-prev" style="background: #444; color: white; border: 1px solid #555; padding: 8px 12px; font-weight: bold; border-radius: 4px; font-size: 11px;">◀ 前の小節</button>
               <button class="button" id="jiro-btn-next" style="background: #444; color: white; border: 1px solid #555; padding: 8px 12px; font-weight: bold; border-radius: 4px; font-size: 11px;">▶ 次の小節</button>
               <span id="jiro-time-display" style="font-size: 12px; font-family: monospace; margin-left: 4px;">0.00 / 0.00s</span>
+              <!-- 2.再生速度コントロールUIを配置 -->
+              <span style="font-size: 11px; margin-left: 6px;">速度:</span>
+              <select id="jiro-speed" style="background: #333; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 2px 4px; font-size: 11px; cursor: pointer;">
+                <option value="1.0" selected>1.0x</option>
+                <option value="0.75">0.75x</option>
+                <option value="0.5">0.5x</option>
+              </select>
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
               <span style="font-size: 11px;">音量:</span>
@@ -415,7 +427,7 @@ function convertMCtoTJA(mcContent) {
     });
     
     metaEvents.forEach(t => { 
-        if (t.bpm === undefined && t.sign === undefined) return;
+        if (t.bpm === undefined && t.sign !== undefined) return;
         const tb = t.adjustedBeat; 
         if (tb < 0) return; 
         const bar = getBarInfo(tb);
@@ -851,68 +863,49 @@ const drawLine = (ctx, sx, sy, ex, ey, w, s) => { ctx.beginPath(); ctx.moveTo(sx
 const drawRect = (ctx, x, y, w, h, f) => { ctx.fillStyle = f; ctx.fillRect(x, y, w, h); };
 const drawCircle = (ctx, x, y, r, f) => { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.fillStyle = f; ctx.fill(); };
 const drawText = (ctx, x, y, t, f, c, b = 'middle', a = 'center') => { ctx.font = f; ctx.textBaseline = b; ctx.textAlign = a; ctx.fillStyle = c; ctx.fillText(t, x, y); };
-const drawPixelText = (ctx, x, y, t, c, b = 'middle', a = 'center') => { drawText(ctx, x, y, t, '10px "Pixel 3x5"', c, b, a); };
+
+// 1. 【文字サイズの微調整】BPMCHANGE、SCROLL、小節番号などのサイズを「8px」から「7px」へさらに小さく設計
+const drawPixelText = (ctx, x, y, t, c, b = 'middle', a = 'center') => { drawText(ctx, x, y, t, '7px "Pixel 3x5"', c, b, a); };
 
 // エディタレーン表示用の描画調整（白フチ・カラーの共通音符デザイン化・不整合の防止）
 function drawNote(ctx, x, y, c, b) { 
     const r = b ? NOTE_RADIUS + 3 : NOTE_RADIUS; 
     drawCircle(ctx, x, y, r, '#000'); 
     drawCircle(ctx, x, y, r-1, '#fff'); // 内枠を白色（#fff）で統一
-    drawCircle(ctx, x, y, r-2, c); 
+    drawCircle(ctx, x, y, r-2.6, c); // 3.【ノーツデザインの微調整】白エリア拡大のため、カラー半径を r-2 から r-2.6 に少し縮小して白枠の比率を調整
 }
 
-// 4. 【デザイン適用拡大】新風船ノーツのデザインを「譜面画像（drawChart）」側にも完全に出力・適用（サイズは通常ノーツと美しく調和する r=10 に調整）
+// 3. 【仕様変更・デザイン調整】エディタ譜面画像生成（drawChart）上の風船ノーツを「小連打と同じ太さ・帯状デザイン（オレンジ配色維持）」へ全面変更
 function drawBalloon(ctx, ri, nb, eb, count) {
   const x = Math.round(getNoteX(nb));
   const y = Math.round(getRowY(ri) + ROW_OFFSET_NOTE_CENTER);
   const ex = Math.round(getNoteX(eb));
   
-  const r = 10; // ミニ風船半径（サイズ最適化調和バランス）
-  const length = ex - x; // 終点までの長さ
-  const color = '#f44336'; // 新デザインカラーに同期
+  const size = NOTE_RADIUS; // 【調和】小連打と完全に同じサイズ（9）に統一して美しく調和
+  const color = '#f97902'; // 連打の黄色ではなく風船本来のオレンジ（#f97902）を維持
   const strokeColor = '#000000';
   
   ctx.save();
   
-  // 終点までの半透明オレンジ補助帯を連打風に美しく描画
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(ex, y);
-  ctx.strokeStyle = 'rgba(255, 110, 0, 0.45)'; 
-  ctx.lineWidth = r * 2;
+  // 【解決】renderPath（rows依存）から直線（drawLine）描画にマッピング変更することで「Can't find variable: rows」エラーを根本解決
   ctx.lineCap = 'round';
-  ctx.stroke();
-
-  // 1. 吹き口（メガホン）部分の描画
-  const megaphoneLength = Math.min(length, 35);
-  ctx.beginPath();
-  ctx.moveTo(x + 2, y - r + 1.5);
-  ctx.quadraticCurveTo(x + 10, y - 3, x + 15, y - 5);
-  ctx.bezierCurveTo(x + 25, y - 10, x + megaphoneLength + 2, y - 8, x + megaphoneLength, y);
-  ctx.bezierCurveTo(x + megaphoneLength + 2, y + 8, x + 25, y + 10, x + 15, y + 5);
-  ctx.quadraticCurveTo(x + 10, y + 3, x + 2, y + r - 1.5);
-  ctx.closePath();
-  ctx.lineWidth = 3;
   ctx.strokeStyle = strokeColor;
-  ctx.stroke();
-  ctx.fillStyle = color;
-  ctx.fill();
+  ctx.lineWidth = size * 2;
+  drawLine(ctx, x, y, ex, y, ctx.lineWidth, strokeColor);
+  
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth -= 2;
+  drawLine(ctx, x, y, ex, y, ctx.lineWidth, '#fff');
+  
+  ctx.strokeStyle = color;
+  ctx.lineWidth -= 2;
+  drawLine(ctx, x, y, ex, y, ctx.lineWidth, color);
+  ctx.lineCap = 'butt'; // lineCapをデフォルトに戻す
 
-  // 2. 丸い風船部分の同心円描画（白・黒フチを通常ノーツに完全同期）
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.fillStyle = strokeColor;
-  ctx.fill();
-  
-  ctx.beginPath();
-  ctx.arc(x, y, r - 1, 0, Math.PI * 2);
-  ctx.fillStyle = '#ffffff'; 
-  ctx.fill();
-  
-  ctx.beginPath();
-  ctx.arc(x, y, r - 3, 0, Math.PI * 2);
-  ctx.fillStyle = color; 
-  ctx.fill();
+  // 始点ノーツとして丸を重ねて美しくデザインを完全統一
+  drawCircle(ctx, x, y, size, strokeColor);
+  drawCircle(ctx, x, y, size - 1, '#fff');
+  drawCircle(ctx, x, y, size - 2.6, color); // 白エリア拡大に対応
   
   // 打数テキスト
   drawPixelText(ctx, x, y + 0.5, count.toString(), '#fff'); 
@@ -955,14 +948,28 @@ function drawChart(chart, courseId) {
         if (e.name === 'gogostart') { gActive = true; gStart = [ri, eb]; }
         if (e.name === 'gogoend' && gActive) {
           const hG = ROW_HEIGHT;
-          if (gStart[0] === ri) drawRect(ctx, getNoteX(gStart[1]), getRowY(ri), getNoteX(eb)-getNoteX(gStart[1]), hG, '#fbb');
-          else { drawRect(ctx, getNoteX(gStart[1]), getRowY(gStart[0]), getNoteX(16) - getNoteX(gStart[1]) + ROW_TRAILING, hG, '#fbb'); for(let r=gStart[0]+1; r<ri; r++) drawRect(ctx, 0, getRowY(r), cW, hG, '#fbb'); drawRect(ctx, 0, getRowY(ri), getNoteX(eb), hG, '#fbb'); }
+          if (gStart[0] === ri) {
+            // 1. 【ゴーゴー背景の描画拡張】引き継がれている際の左端（画面外 0px）へのはみ出し同期処理
+            const startX = (gStart[1] === 0 && ri > 0) ? 0 : getNoteX(gStart[1]);
+            drawRect(ctx, startX, getRowY(ri), getNoteX(eb)-startX, hG, '#fbb');
+          } else { 
+            // 前の行からの引き継ぎ時
+            const startX = (gStart[1] === 0 && gStart[0] > 0) ? 0 : getNoteX(gStart[1]);
+            drawRect(ctx, startX, getRowY(gStart[0]), cW - startX, hG, '#fbb'); 
+            for(let r=gStart[0]+1; r<ri; r++) drawRect(ctx, 0, getRowY(r), cW, hG, '#fbb'); 
+            drawRect(ctx, 0, getRowY(ri), getNoteX(eb), hG, '#fbb'); 
+          }
           gStart = null; gActive = false;
         }
       });
       bAcc += mb;
     });
-    if (gActive && gStart) { drawRect(ctx, getNoteX(gStart[1]), getRowY(gStart[0]), getNoteX(16)-getNoteX(gStart[1])+ROW_TRAILING, ROW_HEIGHT, '#fbb'); gStart = [ri+1, 0]; }
+    if (gActive && gStart) { 
+      // 1. 【ゴーゴー背景の描画拡張】行末で続いている場合も左端（0px）を考慮して右端まで綺麗に繋げる
+      const startX = (gStart[1] === 0 && gStart[0] > 0) ? 0 : getNoteX(gStart[1]);
+      drawRect(ctx, startX, getRowY(gStart[0]), cW - startX, ROW_HEIGHT, '#fbb'); 
+      gStart = [ri+1, 0]; 
+    }
   });
 
   rows.forEach((row, ri) => {
@@ -1021,7 +1028,7 @@ function drawChart(chart, courseId) {
           // 【デザイン適用拡大】書き出し用「譜面画像」側の連打始点（左端）に丸型始点ノーツ（白・黒同心円フチ）を重ねて完全同期出力
           drawCircle(ctx, nx, ny, size, '#000');
           drawCircle(ctx, nx, ny, size - 1, '#fff');
-          drawCircle(ctx, nx, ny, size - 2, '#ffc107');
+          drawCircle(ctx, nx, ny, size - 2.6, '#ffc107'); // 白エリア拡大に対応
           
           lEnd = null; 
         }
@@ -1259,6 +1266,7 @@ let musicGainNode = null;
 const audioBuffers = {};
 
 let isPlaying = false;
+let wasPlayingBeforeHidden = false; // バックグラウンド移行前の再生状態
 let currentElapsedTime = 0.0;
 let simulationStartOffset = 0.0;
 let simulationStartTime = 0.0;
@@ -1271,7 +1279,7 @@ const isAutoPlay = true;
 let currentCombo = 0;
 let currentMeasureIndex = 0;
 let currentChartData = null; // 太鼓さん次郎プレビュー用に変換した高精度データ
-let autoRollSpeed = 30; // オートプレイ時の秒間打鍵
+let autoRollSpeed = 30.0; // オートプレイ時の秒間打鍵（黄色連打：秒間30打固定。風船は長さ等から自動制御）
 let renderFPS = 60;
 let scrollMultiplier = 1.0;
 let seVolume = 0.8;
@@ -1315,7 +1323,7 @@ const taikoEffects = {
 };
 const EFFECT_DURATION = 0.15; // 0.15秒かけて減衰
 
-// オート演奏交互叩き処理状態管理 (打鍵領域の物理順トグル)
+// オート演奏交互叩き処理状態管理 (打鍵領域 of 物理順トグル)
 let autoLastSide = 'L'; // 初期値 L (全体で一括管理して左右をトグル)
 
 // 位置基準の優先順位（値が大きい＝右側、先に処理・描画する優先度）
@@ -1324,6 +1332,10 @@ const positionPriority = { kaR: 4, donR: 3, donL: 2, kaL: 1 };
 // jiroCanvasとjiroCtxのスコープをグローバルで宣言。DOM生成前にバインドされるエラーを根本解決
 let jiroCanvas = null;
 let jiroCtx = null;
+
+// 【譜面表示軽量化】再レンダリングを削減する高パフォーマンス・画像キャッシュ管理システム
+let cachedChartCanvas = null;
+let isChartCacheDirty = true; // 譜面の更新・パース成功時に true に設定し無駄なCanvas生成を完全回避
 
 function triggerTaikoEffect(part, time) {
     taikoEffects[part].active = true;
@@ -1359,7 +1371,7 @@ function triggerAutoHitSide(hitType, time, isBig = false) {
         }
     } else if (hitType === 'ka') {
         if (isBig) {
-            // 大カッは両手（右→左の順）
+            // 大カッは両手（右→左 of 順）
             hitQueue.push({ part: 'kaR', priority: positionPriority.kaR });
             hitQueue.push({ part: 'kaL', priority: positionPriority.kaL });
             autoLastSide = 'R'; // 大音符後はRに固定
@@ -1445,15 +1457,19 @@ function updateUI() {
   u('.page').addClass('is-hidden'); u(`.page-${selectedPage}`).removeClass('is-hidden');
   if (tjaParsed && selectedDifficulty !== '') {
     if (selectedPage === 'editor') {
-      const generatedCanvas = drawChart(tjaParsed, selectedDifficulty);
+      // 2. 【譜面表示軽量化】ダーティキャッシュシステムによる不要Canvas再生成の排除。ズーム・スクロール・ページ遷移時の描画性能を最大化
+      if (isChartCacheDirty || !cachedChartCanvas) {
+        cachedChartCanvas = drawChart(tjaParsed, selectedDifficulty);
+        isChartCacheDirty = false;
+      }
       
       const viewCanvas = document.createElement('canvas');
-      viewCanvas.width = generatedCanvas.width;
-      viewCanvas.height = generatedCanvas.height;
-      viewCanvas.style.width = generatedCanvas.style.width;
-      viewCanvas.style.height = generatedCanvas.style.height;
+      viewCanvas.width = cachedChartCanvas.width;
+      viewCanvas.height = cachedChartCanvas.height;
+      viewCanvas.style.width = cachedChartCanvas.style.width;
+      viewCanvas.style.height = cachedChartCanvas.style.height;
       const viewCtx = viewCanvas.getContext('2d');
-      viewCtx.drawImage(generatedCanvas, 0, 0);
+      viewCtx.drawImage(cachedChartCanvas, 0, 0);
 
       u('.page-editor').empty().append(viewCanvas);
       u('.page-editor').first().style.width = zoomLevel + '%';
@@ -1520,11 +1536,10 @@ function highlightTJA(text) {
   const lines = text.split('\n');
   let rendaState = 0; // 0:通常, 5:黄連打中(5,6), 7:風船連打中(7)
 
-  const highlightedLines = lines.map((line, lineIndex) => {
-    const isErrorLine = (lineIndex === errorLineNumber - 1);
+  const highlightedLines = lines.map((line) => {
     const trimmed = line.trim();
-    
     let lineHtml = "";
+    
     if (trimmed.startsWith('//')) {
       lineHtml = `<span style="color: #888888; font-style: italic;">${escapeHtml(line)}</span>`;
     } else if (trimmed.startsWith('#')) {
@@ -1540,14 +1555,10 @@ function highlightTJA(text) {
         
         if (rendaState === 5) {
           result += `<span style="color: #ffff00; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
-          if (char === '8') {
-            rendaState = 0; 
-          }
+          if (char === '8') rendaState = 0; 
         } else if (rendaState === 7) {
           result += `<span style="color: #ff9100; font-weight: bold; ${textShadow}">${escapedChar}</span>`;
-          if (char === '8') {
-            rendaState = 0; 
-          }
+          if (char === '8') rendaState = 0; 
         } else {
           if (char === '5' || char === '6') {
             rendaState = 5;
@@ -1566,32 +1577,116 @@ function highlightTJA(text) {
       }
       lineHtml = result;
     }
-
-    if (isErrorLine) {
-      return `<div class="error-line-highlight" style="background-color: rgba(255, 0, 0, 0.25); display: inline-block; width: 100%;">${lineHtml}</div>`;
-    }
-    return lineHtml;
+    
+    // 【仕様修正】自動改行・折り返し（pre-wrap）を検知・同期可能にするため、各行を個別のdivブロックとしてラップ
+    const finalHtml = lineHtml === "" ? "&#8203;" : lineHtml;
+    return `<div class="highlight-row" style="width:100%; word-break:break-all;">${finalHtml}</div>`;
   });
-  return highlightedLines.join('\n');
+  
+  return highlightedLines.join('');
 }
 
 const textarea = u('.input').first();
 const backdrop = u('.backdrop').first();
 const highlightDiv = u('.highlight').first();
 
+// 1. 【小節番号配置ロジックの修正】#START～#END内のみカウントし、「小節の開始行（小節頭）」に小節番号（数字のみ）を完全自動同期して配置
 function updateLineNumbers(text) {
   const lineNumbers = u('.line-numbers').first();
   if (!lineNumbers) return;
-  const linesCount = text.split('\n').length;
+  const lines = text.split('\n');
+  
+  // 小節の開始行インデックスと小節番号の辞書マップを構築
+  const measureStartMap = {}; // { lineIndex: measureNumber }
+  
+  let inActiveChart = false;
+  let currentMeasureNum = 1;
+  let currentMeasureStartLineIndex = null;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    const rawLine = line.split('//')[0].trim();
+    const upperLine = rawLine.toUpperCase();
+    
+    // パース範囲を#STARTから#ENDまでに完全限定
+    if (upperLine === '#START') {
+      inActiveChart = true;
+      currentMeasureNum = 1;
+      currentMeasureStartLineIndex = null;
+      continue;
+    }
+    if (upperLine === '#END') {
+      inActiveChart = false;
+      continue;
+    }
+    
+    if (inActiveChart) {
+      // 空行や純コメント行以外の、有効な小節構成データ記述行を処理
+      if (rawLine !== "") {
+        if (currentMeasureStartLineIndex === null) {
+          currentMeasureStartLineIndex = i;
+          measureStartMap[i] = currentMeasureNum;
+        }
+        if (rawLine.includes(',')) {
+          // カンマ検出で小節が区切られるため、その次の有効行を新しい小節開始とする
+          currentMeasureStartLineIndex = null;
+          currentMeasureNum++;
+        }
+      }
+    }
+  }
+  
   let html = "";
-  for (let i = 1; i <= linesCount; i++) {
-    const isError = (i === errorLineNumber);
-    const style = isError ? "color: #ff5555; font-weight: bold; background: rgba(255, 0, 0, 0.2);" : "";
-    html += `<span class="ln-${i}" style="${style}">${i}</span>`;
+  for (let i = 0; i < lines.length; i++) {
+    const isError = ((i + 1) === errorLineNumber);
+    const bgStyle = isError ? "background: rgba(255, 0, 0, 0.2);" : "";
+    
+    let measureSuffix = "";
+    if (measureStartMap[i] !== undefined) {
+      // カッコ ( ) を完全に排除し、極小フォントサイズ（6.5px、縮小0.9倍）のすっきりとした数字のみを配置
+      measureSuffix = `<span style="color: #ff8800; font-size: 6.5px; font-weight: normal; font-family: sans-serif; text-align: right; width: 18px; transform: scale(0.9); display: inline-block;">${measureStartMap[i]}</span>`;
+    } else {
+      measureSuffix = `<span style="width: 18px; display: inline-block;"></span>`;
+    }
+    
+    // 行番号も極小フォント（8px）に変更してカラム幅42pxに完全分離・調和
+    html += `<div class="line-number-row" style="${bgStyle} height: 18px;" id="ln-row-${i}">` +
+              `<span style="color: #5a5a5a; font-size: 8px; text-align: right; width: 18px; font-family: monospace; display: inline-block;">${i + 1}</span>` +
+              measureSuffix +
+            `</div>`;
   }
   lineNumbers.innerHTML = html;
+  
+  // テキストの自動改行時の高さをミリ秒レベルで完全連動・同期させる
+  syncLineHeights();
+}
+
+// 2. 【自動改行ズレ修正】右側のテキストエリアが自動改行で伸びた物理高さを動的に計測し、左側の行番号ブロック高さを瞬時に自動一致させる完全同期ロジック
+function syncLineHeights() {
+  const container = u('.editor-container').first();
+  if (!container) return;
+  
+  const highlightRows = container.querySelectorAll('.highlight-row');
+  const lnRows = container.querySelectorAll('.line-number-row');
+  
+  const len = Math.min(highlightRows.length, lnRows.length);
+  for (let i = 0; i < len; i++) {
+      const hRow = highlightRows[i];
+      const lnRow = lnRows[i];
+      
+      // 自動折り返しで伸びた高さを境界ボックスから精密に取得
+      const h = hRow.getBoundingClientRect().height;
+      if (h > 0) {
+          lnRow.style.height = h + 'px'; // 行番号ブロックをテキスト側の物理高さと完全に同期
+      } else {
+          lnRow.style.height = '18px';
+      }
+  }
   syncScroll();
 }
+
+// 画面サイズ変更時（縦画面・横画面切替時など）にも折り返し行数が変化するため、自動で即時再計算同期をバインド
+window.addEventListener('resize', syncLineHeights);
 
 function syncScroll() {
   backdrop.scrollTop = textarea.scrollTop;
@@ -1610,9 +1705,8 @@ function updateHighlight() {
   pendingHighlightUpdate = true;
   requestAnimationFrame(() => {
     const text = textarea.value;
-    highlightDiv.innerHTML = highlightTJA(text) + '\n';
+    highlightDiv.innerHTML = highlightTJA(text);
     updateLineNumbers(text); 
-    syncScroll();
     pendingHighlightUpdate = false;
   });
 }
@@ -1744,7 +1838,11 @@ u('#file-input').on('change', async (e) => {
         } else { 
             content = f.name.endsWith('.mc') ? convertMCtoTJA(await loadFileWithEncoding(ab)) : await loadFileWithEncoding(ab); 
         }
-        u('.input').first().value = content; processFunc();
+        u('.input').first().value = content; 
+        
+        // 1. 【再読み込み更新バグ修正】読み込み完了時、ダーティキャッシュフラグを真にし即座に再描画させる
+        isChartCacheDirty = true;
+        processFunc();
     } catch(err) { u('.errors').text(err.message); }
     e.target.value = null;
 });
@@ -1767,6 +1865,7 @@ u('.controls-diff .button[data-value]').on('click', e => {
   selectedDifficulty = u(e.target).data('value'); 
   currentChartData = preparePreviewChart(tjaParsed, selectedDifficulty);
   if (currentChartData) setChartTime(0);
+  isChartCacheDirty = true; // キャッシュダーティフラグを有効化（要再構築）
   updateUI(); 
 });
 u('.controls-page .button[data-value]').on('click', e => { 
@@ -1944,7 +2043,7 @@ function drawJiroPremiumNote(ctx, x, y, type) {
     ctx.fill();
     
     ctx.beginPath();
-    ctx.arc(x, y, r - 3, 0, Math.PI * 2);
+    ctx.arc(x, y, r - 4.2, 0, Math.PI * 2); // 3.【ノーツデザインの微調整】白エリア拡大のため、カラー半径を r-3 から r-4.2 に少し縮小して白枠の比率を調整
     ctx.fillStyle = color;
     ctx.fill();
 }
@@ -2017,8 +2116,11 @@ function updateJiroPreview(time = currentElapsedTime) {
     
     // スマホ対応高解像度自動スケーリング対応
     const dpr = window.devicePixelRatio || 1;
-    const rectWidth = jiroCanvas.clientWidth || 946;
-    const rectHeight = jiroCanvas.clientHeight || 150; // レーン拡大に合わせ 150px 基準に調整
+    
+    // 【スマホプレビューバグ修正】初期非表示（タブ未移動）状態の際、Canvas幅が 0 になり描画が潰れてしまうのを防ぐため、コンテナの有効サイズをフォールバック参照
+    const container = document.getElementById('jiro-preview-container');
+    const rectWidth = jiroCanvas.clientWidth > 0 ? jiroCanvas.clientWidth : (container && container.clientWidth > 0 ? container.clientWidth : 946);
+    const rectHeight = jiroCanvas.clientHeight > 0 ? jiroCanvas.clientHeight : 150; // レーン拡大に合わせ 150px 基準に調整
     
     jiroCanvas.width = rectWidth * dpr;
     jiroCanvas.height = rectHeight * dpr;
@@ -2040,7 +2142,7 @@ function updateJiroPreview(time = currentElapsedTime) {
     jiroCtx.fillStyle = '#333333';
     jiroCtx.fillRect(0, laneTop, rectWidth, laneHeight);
 
-    // ゴーゴー背景グラデーションをレーン内のみに適用 (左側は濃いオレンジ、右へ行くほど徐々に薄く)
+    // ゴーゴータイムの演出色を適用
     if (state_isGogo) {
         const grad = jiroCtx.createLinearGradient(110, 0, rectWidth, 0);
         grad.addColorStop(0, 'rgba(255, 69, 0, 0.35)');
@@ -2178,18 +2280,7 @@ function updateJiroPreview(time = currentElapsedTime) {
             }
             if (displayX > rectWidth + canvasMargin || displayX < -canvasMargin) continue;
             
-            // 4. 【視覚的補助表現追加】風船ノーツの長さ(note.time から note.endTimeまで)を示す半透明オレンジ帯を最下層へ追加
-            if (x < rectWidth + canvasMargin && endX > -canvasMargin) {
-                jiroCtx.save();
-                jiroCtx.beginPath();
-                jiroCtx.moveTo(x, baseCenterY);
-                jiroCtx.lineTo(endX, baseCenterY);
-                jiroCtx.strokeStyle = 'rgba(255, 110, 0, 0.35)'; // 連打風半透明オレンジ
-                jiroCtx.lineWidth = 26; // 連打ノーツ風の太さ
-                jiroCtx.lineCap = 'round';
-                jiroCtx.stroke();
-                jiroCtx.restore();
-            }
+            // 2. 【仕様修正】再生プレビュー画面に限り、かつて追加した半透明のオレンジ色の補助背景帯（オーバーレイ）を完全に削除
 
             // 添付画像を忠実に再現したCanvas描画風船ノーツ (1.サイズ・フチ・配色調整済み)
             drawJiroBalloonNote(jiroCtx, displayX, baseCenterY, note);
@@ -2385,7 +2476,13 @@ async function startSimulation() {
     if (musicAudioBuffer && isFileNameMatch) {
         musicSourceNode = audioContext.createBufferSource();
         musicSourceNode.buffer = musicAudioBuffer;
+        
+        // 【倍速再生】再生速度の変更
         musicSourceNode.playbackRate.value = playbackSpeed;
+        if ('preservesPitch' in musicSourceNode) {
+            musicSourceNode.preservesPitch = true; // ピッチが変わらないように設定
+        }
+        
         musicSourceNode.connect(musicGainNode);
 
         const offset = tjaParsed.headers.offset || 0;
@@ -2393,10 +2490,13 @@ async function startSimulation() {
 
         if (simulationStartOffset < targetTime) {
             let waitTime = targetTime - simulationStartOffset;
-            musicSourceNode.start(audioContext.currentTime + waitTime, 0);
+            
+            // 【完全同期】譜面の進む速度（playbackSpeed）に合わせて、現実時間での再生開始待ち秒数をスケール調整
+            let realWaitTime = waitTime / playbackSpeed;
+            musicSourceNode.start(audioContext.currentTime + realWaitTime, 0);
         } else {
             let playedRealTime = simulationStartOffset - targetTime;
-            let musicOffset = playedRealTime * playbackSpeed;
+            let musicOffset = playedRealTime;
             musicSourceNode.start(audioContext.currentTime, musicOffset);
         }
     }
@@ -2495,7 +2595,19 @@ function autoHitCheck(elapsedTime) {
         if (note.type >= '5' && note.type <= '7') {
             if (elapsedTime >= note.time && elapsedTime <= note.endTime) {
                 if (note.lastAutoHitTime === 0) note.lastAutoHitTime = note.time;
-                const hitInterval = 1.0 / autoRollSpeed;
+                
+                // 3. 【AUTO自動再生連打・風船の高度化】打鍵速度（秒間打数）を仕様に基づき動的制御
+                let currentRollSpeed = 30.0; // デフォルト黄色連打：秒間30打固定
+                if (note.type === '7') {
+                    // 風船ノーツの場合：指定打数と長さ（秒）から算出し、制限値（最大50.0打/秒）を動的適用
+                    const duration = note.endTime - note.time;
+                    if (duration > 0 && note.hits > 0) {
+                        currentRollSpeed = (note.hits / duration) * 1.1;
+                    }
+                    currentRollSpeed = Math.min(50.0, currentRollSpeed); // システム上限50.0打/秒にクリップ
+                }
+                
+                const hitInterval = 1.0 / currentRollSpeed;
                 const timeSinceLastHit = elapsedTime - note.lastAutoHitTime;
                 if (timeSinceLastHit >= hitInterval) {
                     const hits = Math.floor(timeSinceLastHit / hitInterval);
@@ -2511,7 +2623,7 @@ function autoHitCheck(elapsedTime) {
                     triggerAutoHitSide(noteHitType, elapsedTime);
 
                     if (note.type === '7' && note.hits > 0 && note.currentHits >= note.hits) {
-                        note.judgeResult = 'hit';
+                        note.judgeResult === 'hit';
                         playSE('balloon');
                     }
                 }
@@ -2555,12 +2667,12 @@ function updateLogic() {
     }
     
     // 【仕様変更】3. 曲の最後までレーンをプレビュー：最後の小節が終わっても、BGM（音源）が完全に鳴り終わるまでは再生・表示を途切れさせず維持する
-    let maxPlayTime = currentChartData ? currentChartData.endTime : 0;
-    if (musicAudioBuffer) {
-        maxPlayTime = Math.max(maxPlayTime, musicAudioBuffer.duration);
-    }
+    // 【再生終了条件の厳密化】「音源が再生終了」かつ「全ノーツが流れ切った」の両方が完全に満たされたタイミングで停止
+    let chartEndTime = currentChartData ? currentChartData.endTime : 0;
+    let musicEndTime = musicAudioBuffer ? musicAudioBuffer.duration : 0;
+    let maxPlayTime = Math.max(chartEndTime, musicEndTime); // 双方の最大値が終了時間
     
-    if (maxPlayTime > 0 && currentElapsedTime > maxPlayTime) {
+    if (maxPlayTime > 0 && currentElapsedTime >= maxPlayTime) {
         if (currentChartData && currentChartData.allMeasureTimes.length > 0) {
             currentElapsedTime = currentChartData.allMeasureTimes[currentChartData.allMeasureTimes.length - 1];
             currentMeasureIndex = currentChartData.allMeasureTimes.length - 1;
@@ -2621,6 +2733,15 @@ function drawLoop(timestamp) {
 // プレビュー操作バインディング
 u('#jiro-btn-play').on('click', togglePlay);
 u('#jiro-btn-stop').on('click', resetSimulation);
+
+// 2.【再生速度】速度変更変更イベント
+u('#jiro-speed').on('change', (e) => {
+    playbackSpeed = parseFloat(e.target.value) || 1.0;
+    if (isPlaying && musicSourceNode) {
+        // 再生中の場合はPlaybackRateを動的に切り替える
+        musicSourceNode.playbackRate.value = playbackSpeed;
+    }
+});
 
 // 小節送りボタンのクリックイベント定義
 u('#jiro-btn-prev').on('click', () => {
@@ -2746,6 +2867,41 @@ window.addEventListener('keyup', (e) => {
             keyState[e.key].timer = null;
         }
     }
+});
+
+// 2. 【Safariタブ移動バグ修正】非アクティブ（hidden）からアクティブ復帰時に自動レジューム＆再生同期ループを安定再開させるリスナー
+document.addEventListener('visibilitychange', async () => {
+    if (document.hidden) {
+        // タブが裏に回った時は安全のため一時停止させ、再生位置の破損や音ズレを防ぐ
+        if (isPlaying) {
+            wasPlayingBeforeHidden = true;
+            stopSimulation();
+        } else {
+            wasPlayingBeforeHidden = false;
+        }
+    } else {
+        // 元のタブに戻った時は AudioContext を強制レジューム
+        if (audioContext) {
+            if (audioContext.state === 'suspended') {
+                try { await audioContext.resume(); } catch(e) {}
+            }
+        }
+        // 裏に回る前に再生中だった場合は自動で正確なタイムスタンプからプレビュー演奏をシームレス再開
+        if (wasPlayingBeforeHidden) {
+            wasPlayingBeforeHidden = false;
+            startSimulation();
+        } else {
+            updateJiroPreview(currentElapsedTime);
+        }
+    }
+});
+
+// ウィンドウフォーカス復帰時にも自動でレジュームして描画フリーズを防止
+window.addEventListener('focus', async () => {
+    if (audioContext && audioContext.state === 'suspended') {
+        try { await audioContext.resume(); } catch(e) {}
+    }
+    updateJiroPreview(currentElapsedTime);
 });
 
 // 自動ロード & データベース初期化
